@@ -1,0 +1,78 @@
+---
+- name: Install node and npm
+  hosts: "{{ variable_host }}"
+  become: true
+  tasks:
+    - name: Update apt repo and cache
+      ansible.builtin.apt:
+        update_cache: yes
+        force_apt_get: yes
+        cache_valid_time: "{{ apt_cache_valid_seconds }}"
+    - name: Install nodejs and npm
+      ansible.builtin.apt:
+        pkg:
+          - nodejs
+          - npm
+
+# see https://docs.ansible.com/ansible-core/2.17/playbook_guide/playbooks_privilege_escalation.html#risks-of-becoming-an-unprivileged-user
+- name: Install ACL so ansible works for non-root users
+  hosts: "{{ variable_host }}"
+  become: true
+  tasks:
+    - name: Update apt repo and cache
+      ansible.builtin.apt:
+        update_cache: yes
+        force_apt_get: yes
+        cache_valid_time: "{{ apt_cache_valid_seconds }}"
+    - name: Install Access Control List
+      ansible.builtin.apt:
+        pkg:
+          - acl
+
+- name: Create new linux user for node app
+  become: true
+  become_method: sudo
+  hosts: "{{ variable_host }}"
+  tasks:
+    - name: Create linux user
+      ansible.builtin.user:
+        name: "{{ linux_user }}"
+        comment: "{{ linux_user_comment }}"
+        password: '*' # disabled
+        group: admin
+        create_home: True
+        shell: /bin/bash
+
+- name: Deploy nodejs app
+  hosts: "{{ variable_host }}"
+  become: true
+  become_method: sudo
+  become_user: "{{ linux_user }}"
+  # vars_files:
+  #   project-vars
+  vars:
+    user_home_dir: "/home/{{ linux_user }}"
+    node_dir: "/home/{{ linux_user }}/package"
+    app_dir: "/home/{{ linux_user }}/package/app"
+  tasks:
+    - name: Unpack the nodejs file
+      ansible.builtin.unarchive:
+        # src: "{{ node-pkg-location }}/nodejs-app-{{ version }}.tgz"
+        src: /home/admin/git/15-devops-bootcamp__ansible/01-linode-deploy-node-app/roles/deploy-node-app/files/nodejs-app-1.0.0.tgz
+        dest: "{{ user_home_dir }}"
+    - name: Install dependencies
+      community.general.npm:
+        path: "{{ node_dir }}"
+    - name: Start the application
+      ansible.builtin.command:
+        chdir: "{{ app_dir }}"
+        cmd: node server
+      async: 10 # TODO
+      poll: 0
+    - name: Pause for 5 seconds to wait for node app to start
+      ansible.builtin.pause:
+        seconds: 5
+    - name: Check if node app is running
+      ansible.builtin.shell: ps aux | grep node
+      register: app_status
+    - ansible.builtin.debug: msg={{ app_status.stdout_lines }}

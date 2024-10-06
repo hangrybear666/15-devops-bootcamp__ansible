@@ -1,0 +1,6 @@
+variable_host: ec2-instances
+linux_user: app-runner
+linux_user_comment: "node/npm service user"
+node-pkg-location: /home/admin/git/15-devops-bootcamp__ansible/01-linode-deploy-node-app/roles/deploy-node-app/files
+version: 1.0.0
+apt_cache_valid_seconds: 86400

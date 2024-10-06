@@ -1,0 +1,2 @@
+# variables for the group contained in the filename
+ansible_user: root

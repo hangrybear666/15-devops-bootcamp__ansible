@@ -1,0 +1,10 @@
+[linodes]
+linode1
+linode2 ansible_host=139.162.143.148
+linode3 ansible_host=139.162.143.154
+
+[ec2-instances]
+ec2-instance1 ansible_host=54.93.64.61
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
