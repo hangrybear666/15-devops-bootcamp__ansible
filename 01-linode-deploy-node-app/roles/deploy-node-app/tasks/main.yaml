@@ -1,0 +1,24 @@
+- name: Unpack the nodejs file
+  ansible.builtin.unarchive:
+    src: "{{ node_pkg_location }}/nodejs-app-{{ version }}.tgz"
+    dest: "{{ user_home_dir }}"
+- name: Install dependencies
+  community.general.npm:
+    path: "{{ node_dir }}"
+- name: Start the application
+  ansible.builtin.command:
+    chdir: "{{ app_dir }}"
+    # This is a basic example for learning ansible and not how you run a server
+    # The node server should actually be run with a systemd service:
+    # See https://stackoverflow.com/a/29042953
+    cmd: node server.js
+  # The process is killed after 30 seconds, hence this is for testing only
+  async: 30
+  poll: 0
+- name: Pause for 5 seconds to wait for node app to start
+  ansible.builtin.pause:
+    seconds: 5
+- name: Check if node app is running
+  ansible.builtin.shell: ps aux | grep node
+  register: app_status
+- ansible.builtin.debug: msg={{ app_status.stdout_lines }}

@@ -47,19 +47,43 @@ cd scripts/ && ./setup-env-vars.sh
 
 https://github.com/hangrybear666/12-devops-bootcamp__terraform.git
 
-#### b. Add remote VPS address to .ssh/known_hosts to avoid Host Key Checking prompt during ansible playbook execution
+#### b. If you want to disable strict host key checking you have two options
 
+<u>Alternative 1:</u>
+
+- Simply leave `host_key_checking = False` in `ansible.cfg`
+
+<u>Alternative 2:</u>
+
+- Comment out  `host_key_checking = False` in `ansible.cfg`
+- For each target server run ssh-keyscan to add the targets to your known_hosts
 ```bash
 # for each of your linodes
-ssh-keyscan -H 3.xxx.xxx.247 >> ~/.ssh/known_hosts
+ssh-keyscan -H 321.xxx.xxx.247 >> ~/.ssh/known_hosts
 ```
 
-#### c.
+#### c. Change the path to the nodejs deployment file to match your system's file structure
 
+- Replace the `node_pkg_location` variable in `01-linode-deploy-node-app/group_vars/all.yaml`
+
+#### d. Change the ip addresses of your remote hosts in hosts and host_vars
+
+- Add your ip addresses to `hosts` file and the `linode1.yaml` file in `host_vars/` folder respectively
+
+#### e. Run ansible playbook with different host targets, depending on your setup
 
 ```bash
 cd 01-linode-deploy-node-app/
-
+# to run only on linode1
+ansible-playbook -i hosts site.yaml -e "variable_host=linode1"
+# to run only on first ec2-instance
+ansible-playbook -i hosts site.yaml -e "variable_host=ec2-instance1"
+# to run on all ec2-instances
+ansible-playbook -i hosts site.yaml -e "variable_host=ec2_instances"
+# to run on all linodes use group name
+ansible-playbook -i hosts site.yaml -e "variable_host=linodes"
+# or use individual names with wildcard
+ansible-playbook -i hosts site.yaml -e "variable_host=linode*"
 ```
 
 </details>

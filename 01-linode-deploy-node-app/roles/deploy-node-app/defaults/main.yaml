@@ -1,0 +1,5 @@
+node_pkg_location: /
+version: "0.0.1"
+user_home_dir: /home
+node_dir: /home/package
+app_dir: /home/package/app

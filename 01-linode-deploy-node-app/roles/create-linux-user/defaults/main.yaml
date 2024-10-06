@@ -1,0 +1,2 @@
+linux_user: default-runner
+linux_user_comment: "Default service-user defined in ansible role"
