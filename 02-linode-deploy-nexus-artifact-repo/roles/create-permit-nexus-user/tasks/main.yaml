@@ -1,0 +1,27 @@
+- name: Ensure group name exists
+  ansible.builtin.group:
+    name: "{{ group_name }}"
+    system: true
+    state: present
+- name: Create service user
+  ansible.builtin.user:
+    name: "{{ service_user }}"
+    group: "{{ group_name }}"
+- name: Make service user owner of nexus folder
+  ansible.builtin.file:
+    path: /opt/nexus
+    state: directory
+    owner: "{{ service_user }}"
+    group: "{{ group_name }}"
+    recurse: yes
+- name: Make service user user owner of sonatype-work folder
+  ansible.builtin.file:
+    path: /opt/sonatype-work
+    state: directory
+    owner: "{{ service_user }}"
+    group: "{{ group_name }}"
+    recurse: yes
+- name: Log Service User Groups
+  ansible.builtin.command: id "{{ service_user }}"
+  register: nexus_groups
+- debug: msg={{nexus_groups.stdout_lines}}

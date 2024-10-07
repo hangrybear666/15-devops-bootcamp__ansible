@@ -12,11 +12,11 @@
     force_apt_get: yes
     cache_valid_time: "{{ apt_cache_valid_seconds }}"
 - name: Install Java 11 JRE
-  apt:
+  ansible.builtin.apt:
     pkg:
       - openjdk-11-jre-headless
       - net-tools
 - name: java installation
-  command: java --version
+  ansible.builtin.command: java --version
   register: java_installation
 - debug: msg={{java_installation.stdout_lines}}
