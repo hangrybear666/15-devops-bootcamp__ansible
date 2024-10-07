@@ -1,0 +1,11 @@
+- name: Wait 60s for nexus startup
+  pause:
+    seconds: 60
+- name: Check with ps
+  shell: ps aux | grep "{{ service_user }}"
+  register: app_status
+- debug: msg={{app_status.stdout_lines}}
+- name: Check with netstat
+  shell: netstat -plnt
+  register: app_status
+- debug: msg={{app_status.stdout_lines}}

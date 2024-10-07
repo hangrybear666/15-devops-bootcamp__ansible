@@ -1,0 +1,7 @@
+- name: Set run_as_user "{{ service_user }}"
+  lineinfile:
+    path: /opt/nexus/bin/nexus.rc
+    regexp: '^#run_as_user=""'
+    line: run_as_user="{{ service_user }}"
+- name: Start nexus
+  command: /opt/nexus/bin/nexus start

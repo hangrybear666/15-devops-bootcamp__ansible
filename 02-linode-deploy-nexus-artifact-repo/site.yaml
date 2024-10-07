@@ -1,43 +1,27 @@
 ---
-# - name: Install java and net-tools
-#   hosts: "{{ variable_host }}"
-#   roles:
-#     - install-legacy-java
+- name: Install java and net-tools
+  hosts: "{{ variable_host }}"
+  roles:
+    - install-legacy-java
 
-# - name: Download and unpack Nexus installer
-#   hosts: "{{ variable_host }}"
-#   roles:
-#     - download-untar-nexus
+- name: Download and unpack Nexus installer
+  hosts: "{{ variable_host }}"
+  roles:
+    - download-untar-nexus
 
-# - name: Create nexus user to own nexus folder
-#   hosts: "{{ variable_host }}"
-#   roles:
-#     - create-permit-nexus-user
+- name: Create nexus user to own nexus folder
+  hosts: "{{ variable_host }}"
+  roles:
+    - create-permit-nexus-user
 
-# - name: Start nexus with nexus user
-#   hosts: "{{ variable_host }}"
-#   become: True
-#   become_user: "{{ service_user }}"
-#   tasks:
-#     - name: Set run_as_user nexus
-#       lineinfile:
-#         path: /opt/nexus/bin/nexus.rc
-#         regexp: '^#run_as_user=""'
-#         line: run_as_user="nexus"
-#     - name: Start nexus
-#       command: /opt/nexus/bin/nexus start
+- name: Start nexus with nexus user
+  hosts: "{{ variable_host }}"
+  become: True
+  become_user: "{{ service_user }}"
+  roles:
+    - start-nexus-binary
 
-# - name: Verify nexus running
-#   hosts: "{{ variable_host }}"
-#   tasks:
-#     - name: Check with ps
-#       shell: ps aux | grep nexus
-#       register: app_status
-#     - debug: msg={{app_status.stdout_lines}}
-#     - name: Wait one minute
-#       pause:
-#         minutes: 1
-#     - name: Check with netstat
-#       shell: netstat -plnt
-#       register: app_status
-#     - debug: msg={{app_status.stdout_lines}}
+- name: Verify nexus running
+  hosts: "{{ variable_host }}"
+  roles:
+    - check-nexus-availability

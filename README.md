@@ -102,10 +102,12 @@ ansible-playbook -i hosts site.yaml -e "variable_host=linode*"
 
 ```bash
 cd 02-linode-deploy-nexus-artifact-repo/
-# to run only on linode1
-ansible-playbook site.yaml -e "variable_host=linode1"
+ansible-playbook site.yaml -e "variable_host=linode*"
 ```
 
+#### d. Navigate to your Remote Hosts Public IP on port 8081 to check availability
+
+*Note:* Your remote firewall must have port 8081 open for ingress
 </details>
 
 -----
