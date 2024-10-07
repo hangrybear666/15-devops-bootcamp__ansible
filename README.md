@@ -2,8 +2,8 @@
 coming up
 
 <b><u>The course examples are:</u></b>
-1. Provision Linode/EC2 Instance /w terraform & use ansible to create linux service-user, install node and npm, then deploy and start a node application
-2. Provision Linode/EC2 Instance /w terraform & use ansible
+1. Provision 1-n Linode/EC2 Instances /w terraform & use ansible to create linux service-user, install node and npm, then deploy and start a node application
+2. Provision 1-n Linode/EC2 Instances /w terraform & use ansible to install java and deploy nexus artifact repository
 
 <!-- <b><u>The exercise projects are:</u></b> -->
 
@@ -41,7 +41,7 @@ cd scripts/ && ./setup-env-vars.sh
 ## Usage (course examples)
 
 <details closed>
-<summary><b>1. Provision Linode/EC2 Instance /w terraform & use ansible to create linux service-user, install node and npm, then deploy and start a node application</b></summary>
+<summary><b>1. Provision 1-n Linode/EC2 Instances /w terraform & use ansible to create linux service-user, install node and npm, then deploy and start a node application</b></summary>
 
 #### a. Create 1-n Linode VPS Servers by following the bonus project 2) in the terraform repo
 
@@ -89,7 +89,7 @@ ansible-playbook -i hosts site.yaml -e "variable_host=linode*"
 -----
 
 <details closed>
-<summary><b>2. </b></summary>
+<summary><b>2. Provision 1-n Linode/EC2 Instances /w terraform & use ansible to install java and deploy nexus artifact repository</b></summary>
 
 #### a. Create 1-n Linode VPS Servers by following the bonus project 2) in the terraform repo
 
