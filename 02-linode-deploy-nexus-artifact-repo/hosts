@@ -1,0 +1,8 @@
+[linodes]
+linode1
+linode2 ansible_host=172.104.252.197
+
+[ec2_instances]
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3

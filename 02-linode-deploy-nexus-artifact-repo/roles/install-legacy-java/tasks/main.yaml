@@ -1,0 +1,22 @@
+- name: Install apt-get-repository for Legacy Java
+  ansible.builtin.apt:
+    pkg:
+      - software-properties-common
+- name: Add specified repository into sources list
+  ansible.builtin.apt_repository:
+    repo: "deb http://ftp.de.debian.org/debian bullseye main"
+    state: present
+- name: Update apt repository and cache
+  ansible.builtin.apt:
+    update_cache: yes
+    force_apt_get: yes
+    cache_valid_time: "{{ apt_cache_valid_seconds }}"
+- name: Install Java 11 JRE
+  apt:
+    pkg:
+      - openjdk-11-jre-headless
+      - net-tools
+- name: java installation
+  command: java --version
+  register: java_installation
+- debug: msg={{java_installation.stdout_lines}}

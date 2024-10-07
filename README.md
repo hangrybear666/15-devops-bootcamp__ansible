@@ -2,8 +2,8 @@
 coming up
 
 <b><u>The course examples are:</u></b>
-1. Provision Linode VPS /w terraform & use ansible to create linux service-user, install node and npm, then deploy and start a node application
-2. Provision Linode VPS /w terraform & use ansible to
+1. Provision Linode/EC2 Instance /w terraform & use ansible to create linux service-user, install node and npm, then deploy and start a node application
+2. Provision Linode/EC2 Instance /w terraform & use ansible
 
 <!-- <b><u>The exercise projects are:</u></b> -->
 
@@ -41,7 +41,7 @@ cd scripts/ && ./setup-env-vars.sh
 ## Usage (course examples)
 
 <details closed>
-<summary><b>1. Provision Linode VPS /w terraform & use ansible to create linux service-user, install node and npm, then deploy and start a node application</b></summary>
+<summary><b>1. Provision Linode/EC2 Instance /w terraform & use ansible to create linux service-user, install node and npm, then deploy and start a node application</b></summary>
 
 #### a. Create 1-n Linode VPS Servers by following the bonus project 2) in the terraform repo
 
@@ -62,15 +62,13 @@ https://github.com/hangrybear666/12-devops-bootcamp__terraform.git
 ssh-keyscan -H 321.xxx.xxx.247 >> ~/.ssh/known_hosts
 ```
 
-#### c. Change the path to the nodejs deployment file to match your system's file structure
-
-- Replace the `node_pkg_location` variable in `01-linode-deploy-node-app/group_vars/all.yaml`
-
-#### d. Change the ip addresses of your remote hosts in hosts and host_vars
+#### c. Change remote ips and specific configuration values for your workspace
 
 - Add your ip addresses to `hosts` file and the `linode1.yaml` file in `host_vars/` folder respectively
+- Change private key path `ansible_ssh_private_key_file` in `group_vars/all.yaml`
+- Replace the `node_pkg_location` variable in `01-linode-deploy-node-app/group_vars/all.yaml`
 
-#### e. Run ansible playbook with different host targets, depending on your setup
+#### d. Run ansible playbook with different host targets, depending on your setup
 
 ```bash
 cd 01-linode-deploy-node-app/
@@ -93,6 +91,36 @@ ansible-playbook -i hosts site.yaml -e "variable_host=linode*"
 <details closed>
 <summary><b>2. </b></summary>
 
+#### a. Create 1-n Linode VPS Servers by following the bonus project 2) in the terraform repo
+
+#### b. Change remote ips and specific configuration values for your workspace
+
+- Add your ip addresses to `hosts` file and the `linode1.yaml` file in `host_vars/` folder respectively
+- Change private key path `ansible_ssh_private_key_file` in `group_vars/all.yaml`
+
+#### c. Run ansible playbook with different host targets, depending on your setup
+
+```bash
+cd 02-linode-deploy-nexus-artifact-repo/
+# to run only on linode1
+ansible-playbook site.yaml -e "variable_host=linode1"
+```
+
+</details>
+
+-----
+
+<details closed>
+<summary><b>3. </b></summary>
+
+#### a. Create 1-n Linode VPS Servers by following the bonus project 2) in the terraform repo
+
+#### b. Change remote ips and specific configuration values for your workspace
+
+- Add your ip addresses to `hosts` file and the `linode1.yaml` file in `host_vars/` folder respectively
+- Change private key path `ansible_ssh_private_key_file` in `group_vars/all.yaml`
+
+#### c. Run ansible playbook with different host targets, depending on your setup
 
 </details>
 
