@@ -1,13 +1,15 @@
 ---
-# - name: Get AWS credentials & login to ECR repository
-#   hosts: localhost
-#   roles:
-#     - aws-docker-login-ecr
+- name: Get AWS credentials & login to ECR repository
+  hosts: localhost
+  vars:
+    run_on_remote: false
+  roles:
+    - aws-docker-login-ecr
 
-# - name: Build local image & push it to a ECR repo
-#   hosts: localhost
-#   roles:
-#     - build-and-push-to-ecr
+- name: Build local image & push it to a ECR repo
+  hosts: localhost
+  roles:
+    - build-and-push-to-ecr
 
 - name: Create new linux user for docker
   become: true
@@ -24,15 +26,38 @@
   roles:
     - install-docker-and-compose
 
+# see https://docs.ansible.com/ansible-core/2.17/playbook_guide/playbooks_privilege_escalation.html#risks-of-becoming-an-unprivileged-user
+- name: Install ACL so ansible works for non-root users
+  hosts: all
+  become: true
+  roles:
+    - install-acl-for-non-root-users
+
+- name: Get AWS credentials & login to ECR repository
+  hosts: all
+  become: true
+  become_user: "{{ linux_user }}"
+  become_method: sudo
+  vars:
+    run_on_remote: true
+  roles:
+    - aws-docker-login-ecr
+
 # - name: Start docker containers
-#   hosts: docker_server
-#   vars_files:
-#     - project-vars
+#   hosts: all
 #   tasks:
+#     - name: Copy AWS config
+#       ansible.builtin.copy:
+#         src: "~/.aws/config"
+#         dest: /home/{{ linux_user }}/.aws/config
+#     - name: Copy AWS credentials
+#       ansible.builtin.copy:
+#         src: "~/.aws/credentials"
+#         dest: /home/{{ linux_user }}/.aws/credentials
 #     - name: Copy docker compose
-#       copy:
-#         src: /Users/nana/bootcamp-java-mysql-project/docker-compose-full.yaml
-#         dest: /home/ec2-user/docker-compose.yaml
+#       ansible.builtin.copy:
+#         src: "{{ build_file_path }}/java-app/docker-compose-remote.yaml"
+#         dest: /home/{{ linux_user }}/docker-compose.yaml
 #       docker_login:
 #         username: nanatwn
 #     - name: Docker login

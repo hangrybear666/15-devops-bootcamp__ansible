@@ -1,16 +1,38 @@
+- name: Ensure .aws directory exists
+  ansible.builtin.file:
+    path: "/home/{{ linux_user }}/.aws"
+    state: directory
+    mode: '0755'
+  when: run_on_remote
+
+- name: Copy AWS config
+  ansible.builtin.copy:
+    src: "~/.aws/config"
+    dest: /home/{{ linux_user }}/.aws/config
+  when: run_on_remote
+
+- name: Copy AWS credentials
+  ansible.builtin.copy:
+    src: "~/.aws/credentials"
+    dest: /home/{{ linux_user }}/.aws/credentials
+  when: run_on_remote
+
 - name: Get ECR token
   ansible.builtin.shell: "aws ecr get-login-password --region {{ region }}"
   register: ecr_token
+
 - name: Get AWS Account ID for dynamic registry URL
   amazon.aws.aws_caller_info:
   register: caller_info
 # - debug: msg={{ caller_info.account }}
 # - debug: msg={{ ecr_token.stdout }}
+
 - name: Setting fact variables
   ansible.builtin.set_fact:
     ecr_registry_url: "{{ caller_info.account }}.dkr.ecr.{{ region }}.amazonaws.com"
     ecr_registry_token: "{{ ecr_token.stdout  }}"
     ecr_registry_full_name: "{{ caller_info.account }}.dkr.ecr.{{ region }}.amazonaws.com/{{ ecr_repo_name }}"
+
 - name: Log into ECR registry
   docker_login:
     registry_url: "{{ ecr_registry_url }}"

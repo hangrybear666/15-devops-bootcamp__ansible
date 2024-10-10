@@ -1,2 +1,3 @@
 # variables applying to all groups
 build_file_path: "/home/admin/git/15-devops-bootcamp__ansible/03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/files"
+linux_user: docker-runner
