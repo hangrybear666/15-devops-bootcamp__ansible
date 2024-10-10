@@ -10,6 +10,7 @@
   ansible.builtin.set_fact:
     ecr_registry_url: "{{ caller_info.account }}.dkr.ecr.{{ region }}.amazonaws.com"
     ecr_registry_token: "{{ ecr_token.stdout  }}"
+    ecr_registry_full_name: "{{ caller_info.account }}.dkr.ecr.{{ region }}.amazonaws.com/{{ ecr_repo_name }}"
 - name: Log into ECR registry
   docker_login:
     registry_url: "{{ ecr_registry_url }}"

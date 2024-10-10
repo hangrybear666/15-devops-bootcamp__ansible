@@ -1,35 +1,28 @@
 ---
-# - name: Get AWS credentials & login to ECR repository
-#   hosts: localhost
-#   roles:
-#     - aws-docker-login-ecr
+- name: Get AWS credentials & login to ECR repository
+  hosts: localhost
+  roles:
+    - aws-docker-login-ecr
 
 - name: Build local image & push it to a ECR repo
   hosts: localhost
   vars:
     java_app_tag: "java-app"
-    java_app_version: "1.0"
-    java_file_path: "./roles/build-and-push-to-ecr/files/java-application/"
+    java_app_version: "1.3"
+    java_file_path: "/home/admin/git/15-devops-bootcamp__ansible/03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/files/java-app"
   tasks:
-    - name: Build java Deployment with Gradle Wrapper
-      register: gradle_output
-      # ansible.builtin.shell: "gradlew clean build"
-      ansible.builtin.shell: "ls -l"
-      args:
-        chdir: "{{ java_file_path }}"
-    - debug: msg={{ gradle_output }}
     - name: Build and push Docker Image
       register: "out"
       community.docker.docker_image:
         build:
           path: "{{ java_file_path }}"
-        name: "{{ ecr_registry_url }}"
+        name: "{{ ecr_registry_full_name }}"
         tag: "{{ java_app_tag }}-{{ java_app_version }}"
         push: true
         source: build
     - name: Show  output
       debug:
-        msg: "{{ out }}"
+        msg: "{{ out.actions }}"
 
 # - name: Install Docker & Docker Compose
 #   hosts: all

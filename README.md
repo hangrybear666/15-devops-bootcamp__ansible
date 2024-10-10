@@ -125,6 +125,8 @@ ansible-playbook site.yaml -e "variable_host=linode*"
 
 - Add your ip addresses to `hosts` file and the `ec2_instance1.yaml` file in `host_vars/` folder respectively
 - Change private key path `ansible_ssh_private_key_file` in `group_vars/all.yaml`
+- Add `region: YOUR_REGION` and `ecr_repo_name: YOUR_REPO_NAME` (just name without URL) to `group_vars/all.yaml`
+
 
 #### c. Create `.env` file in `03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/files/java-app/` folder by running the following script, generating random passwords via openssl for you.
 
@@ -143,7 +145,10 @@ docker compose -f docker-compose-local.yaml up
 
 #### d. Run ansible playbook with different host targets, depending on your setup
 
-
+```bash
+ansible-playbook site.yaml -e java_app_version="1.4"
+```
+docker push 010928217051.dkr.ecr.eu-central-1.amazonaws.com/ansible-imgs:java-app-1.3
 
 </details>
 

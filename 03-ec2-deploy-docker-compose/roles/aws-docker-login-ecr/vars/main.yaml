@@ -1,1 +1,2 @@
 region: eu-central-1
+ecr_repo_name: ansible-imgs
