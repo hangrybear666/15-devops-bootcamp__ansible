@@ -126,7 +126,7 @@ ansible-playbook site.yaml -e "variable_host=linode*"
 - Add your ip addresses to `hosts` file and the `ec2_instance1.yaml` file in `host_vars/` folder respectively
 - Change private key path `ansible_ssh_private_key_file` in `group_vars/all.yaml`
 - Add `region: YOUR_REGION` and `ecr_repo_name: YOUR_REPO_NAME` (just name without URL) to `group_vars/all.yaml`
-
+- Overwrite `java_file_path` in `group_vars/all.yaml` to the absolute filepath in your repository for dockerfile to be found by Ansible
 
 #### c. Create `.env` file in `03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/files/java-app/` folder by running the following script, generating random passwords via openssl for you.
 

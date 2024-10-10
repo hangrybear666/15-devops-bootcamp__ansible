@@ -1,0 +1,12 @@
+- name: Build and push Docker Image
+  register: "out"
+  community.docker.docker_image:
+    build:
+      path: "{{ java_file_path }}"
+    name: "{{ ecr_registry_full_name }}"
+    tag: "{{ java_app_tag }}-{{ java_app_version }}"
+    push: true
+    source: build
+- name: Show  output
+  debug:
+    msg: "{{ out.actions }}"
