@@ -38,6 +38,10 @@ cd scripts/ && ./install-ansible.sh
 cd scripts/ && ./setup-env-vars.sh
 ``` -->
 
+### 5. Install AWS CLI on your development machine
+
+Follow the steps described in https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+
 ## Usage (course examples)
 
 <details closed>
@@ -115,14 +119,23 @@ ansible-playbook site.yaml -e "variable_host=linode*"
 <details closed>
 <summary><b>3. </b></summary>
 
-#### a. Create 1-n Linode VPS Servers by following the bonus project 2) in the terraform repo
+#### a. Create 1-n EC2 Instances  by following the demo project 2) in the terraform repo
 
 #### b. Change remote ips and specific configuration values for your workspace
 
-- Add your ip addresses to `hosts` file and the `linode1.yaml` file in `host_vars/` folder respectively
+- Add your ip addresses to `hosts` file and the `ec2_instance1.yaml` file in `host_vars/` folder respectively
 - Change private key path `ansible_ssh_private_key_file` in `group_vars/all.yaml`
 
-#### c. Run ansible playbook with different host targets, depending on your setup
+#### c. Build and Push java application Image to AWS Elastic Container Registry (ECR)
+
+```bash
+aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 010928217051.dkr.ecr.eu-central-1.amazonaws.com
+docker build -t java-app:2.3 java-app/.
+docker tag java-app:2.3 010928217051.dkr.ecr.eu-central-1.amazonaws.com/k8s-imgs:java-app-2.3
+docker push 010928217051.dkr.ecr.eu-central-1.amazonaws.com/k8s-imgs:java-app-2.3
+```
+
+#### d. Run ansible playbook with different host targets, depending on your setup
 
 </details>
 

@@ -1,0 +1,7 @@
+[linodes]
+
+[ec2_instances]
+ec2_instance1
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
