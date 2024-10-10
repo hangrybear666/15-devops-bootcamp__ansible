@@ -126,27 +126,24 @@ ansible-playbook site.yaml -e "variable_host=linode*"
 - Add your ip addresses to `hosts` file and the `ec2_instance1.yaml` file in `host_vars/` folder respectively
 - Change private key path `ansible_ssh_private_key_file` in `group_vars/all.yaml`
 
-#### c. Build and Push java application Image to AWS Elastic Container Registry (ECR)
-
-```bash
-aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 010928217051.dkr.ecr.eu-central-1.amazonaws.com
-docker build -t java-app:2.3 java-app/.
-docker tag java-app:2.3 010928217051.dkr.ecr.eu-central-1.amazonaws.com/ansible-imgs:java-app-2.3
-docker push 010928217051.dkr.ecr.eu-central-1.amazonaws.com/ansible-imgs:java-app-2.3
-```
-
-#### a. Create `.env` file in `03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/files/java-app/` folder by running the following script, generating random passwords via openssl for you.
+#### c. Create `.env` file in `03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/files/java-app/` folder by running the following script, generating random passwords via openssl for you.
 
 ```bash
 cd scripts
 ./create-exercise-env-vars.sh
 ```
 
-#### d. 
+<b>Test your java-mysql-phpmyadmin stack locally</b>
 
-Change const HOST = "3.79.46.109"; `03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/files/java-app/src/main/resources/static/index.html`
+```bash
+cd 03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/files/java-app/
+VERSION_TAG=0.9 \
+docker compose -f docker-compose-local.yaml up
+```
 
 #### d. Run ansible playbook with different host targets, depending on your setup
+
+
 
 </details>
 

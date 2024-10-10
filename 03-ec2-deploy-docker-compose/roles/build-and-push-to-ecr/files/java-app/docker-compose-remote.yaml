@@ -11,7 +11,7 @@ services:
     networks:
       - mysql-db-gui
     volumes:
-      - mysql-data:/var/lib/mysql
+      - mysql-data-dir:/var/lib/mysql
     healthcheck:
       test: ["CMD-SHELL", "mysql --user=root --password=$MYSQL_ROOT_PASSWORD --execute \"SELECT 1\""]
       interval: 5s
@@ -32,17 +32,15 @@ services:
     depends_on:
       mysqldb:
         condition: service_healthy
-  
+
   java-app:
-    image: java-app:${VERSION_TAG}
+    image: ${ECR_REPO_URL}:${VERSION_TAG}
     container_name: java-app
     build:
       context: .
       dockerfile: Dockerfile
     env_file:
       - .env
-    environment:
-      - DB_SERVER=${DB_SERVER_OVERRIDE}
     ports:
       - 80:8080
     networks:
@@ -56,5 +54,5 @@ networks:
     driver: bridge
 
 volumes:
-  mysql-data:
-    name: mysql-data
+  mysql-data-dir:
+    name: mysql-data-dir
