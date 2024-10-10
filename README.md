@@ -135,6 +135,17 @@ docker tag java-app:2.3 010928217051.dkr.ecr.eu-central-1.amazonaws.com/ansible-
 docker push 010928217051.dkr.ecr.eu-central-1.amazonaws.com/ansible-imgs:java-app-2.3
 ```
 
+#### a. Create `.env` file in `03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/files/java-app/` folder by running the following script, generating random passwords via openssl for you.
+
+```bash
+cd scripts
+./create-exercise-env-vars.sh
+```
+
+#### d. 
+
+Change const HOST = "3.79.46.109"; `03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/files/java-app/src/main/resources/static/index.html`
+
 #### d. Run ansible playbook with different host targets, depending on your setup
 
 </details>
