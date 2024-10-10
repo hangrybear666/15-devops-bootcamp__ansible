@@ -1,59 +1,82 @@
 ---
-- name: Install Docker
-  hosts: all
-  become: yes
-  tasks:
-    - name: Install Docker
-      yum:
-        name: docker
-        update_cache: yes
-        state: present
-    - name: Start docker daemon
-      systemd:
-        name: docker
-        state: started
+- name: Get AWS credentials & login to ECR repository
+  hosts: localhost
+  roles:
+    - aws-docker-login-ecr
 
-- name: Install Docker-compose
-  hosts: all
-  tasks:
-    - name: Create docker-compose directory
-      file:
-        path: ~/.docker/cli-plugins
-        state: directory
-    - name: Get architecture of remote machine
-      shell: uname -m
-      register: remote_arch
-    - name: Install docker-compose
-      get_url:
-        url: "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-{{lookup('pipe', 'uname -m')}}"
-        dest: ~/.docker/cli-plugins/docker-compose
-        mode: +x
+# - name: Build an image and push it to a private repo
+#   hosts: localhost
+#   vars:
+#     registry_host: "localhost"
+#     java-app-tag: "java-app"
+#     java-app-version: "1.0"
+#     docker-file-path: "./roles/build-and-push-to-ecr/files/java-application/Dockerfile"
+#     ecr-registry-url: "010928217051.dkr.ecr.eu-central-1.amazonaws.com/ansible-imgs"
+#   tasks:
+#     - name: Build and push Docker Image
+#       register: "out"
+#       community.docker.docker_image:
+#         build:
+#           path: "{{ docker-file-path }}"
+#         name: "{{ ecr-registry-url }}"
+#         tag: "{{ java-app-tag }}-{{ java-app-version }}"
+#         push: true
+#         source: build
+#     - name: Show  output
+#       debug:
+#         msg: "{{ out }}"
 
-- name: Add ec2-user to docker group
-  hosts: all
-  become: yes
-  tasks:
-    - name: Add ec2-user to docker group
-      user:
-        name: ec2-user
-        groups: docker
-        append: yes
-    - name: Reconnect to server session
-      meta: reset_connection
+# - name: Install Docker & Docker Compose
+#   hosts: all
+#   become: yes
+#   tasks:
+#     - name: Install Docker
+#       yum:
+#         name: docker
+#         update_cache: yes
+#         state: present
+#     - name: Start docker daemon
+#       systemd:
+#         name: docker
+#         state: started
+#     - name: Create docker-compose directory
+#       file:
+#         path: ~/.docker/cli-plugins
+#         state: directory
+#     - name: Get architecture of remote machine
+#       shell: uname -m
+#       register: remote_arch
+#     - name: Install docker-compose
+#       get_url:
+#         url: "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-{{lookup('pipe', 'uname -m')}}"
+#         dest: ~/.docker/cli-plugins/docker-compose
+#         mode: +x
 
-- name: Start docker containers
-  hosts: docker_server
-  vars_files:
-    - project-vars
-  tasks:
-    - name: Copy docker compose
-      copy:
-        src: /Users/nana/bootcamp-java-mysql-project/docker-compose-full.yaml
-        dest: /home/ec2-user/docker-compose.yaml
-      docker_login:
-        username: nanatwn
-    - name: Docker login
-        password: "{{docker_password}}"
-    - name: Start containers from compose
-      community.docker.docker_compose_v2:
-        project_src: /home/ec2-user
+# - name: Add ec2-user to docker group
+#   hosts: all
+#   become: yes
+#   tasks:
+#     - name: Add ec2-user to docker group
+#       user:
+#         name: ec2-user
+#         groups: docker
+#         append: yes
+#     - name: Reconnect to server session
+#       meta: reset_connection
+
+# - name: Start docker containers
+#   hosts: docker_server
+#   vars_files:
+#     - project-vars
+#   tasks:
+#     - name: Copy docker compose
+#       copy:
+#         src: /Users/nana/bootcamp-java-mysql-project/docker-compose-full.yaml
+#         dest: /home/ec2-user/docker-compose.yaml
+#       docker_login:
+#         username: nanatwn
+#     - name: Docker login
+#         password: "{{docker_password}}"
+#     - name: Start containers from compose
+#       community.docker.docker_compose_v2:
+#         project_src: /home/ec2-user

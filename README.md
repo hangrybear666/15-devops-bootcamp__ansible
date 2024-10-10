@@ -131,8 +131,8 @@ ansible-playbook site.yaml -e "variable_host=linode*"
 ```bash
 aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 010928217051.dkr.ecr.eu-central-1.amazonaws.com
 docker build -t java-app:2.3 java-app/.
-docker tag java-app:2.3 010928217051.dkr.ecr.eu-central-1.amazonaws.com/k8s-imgs:java-app-2.3
-docker push 010928217051.dkr.ecr.eu-central-1.amazonaws.com/k8s-imgs:java-app-2.3
+docker tag java-app:2.3 010928217051.dkr.ecr.eu-central-1.amazonaws.com/ansible-imgs:java-app-2.3
+docker push 010928217051.dkr.ecr.eu-central-1.amazonaws.com/ansible-imgs:java-app-2.3
 ```
 
 #### d. Run ansible playbook with different host targets, depending on your setup

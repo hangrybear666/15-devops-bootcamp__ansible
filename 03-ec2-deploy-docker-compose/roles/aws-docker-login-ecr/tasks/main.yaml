@@ -1,0 +1,21 @@
+- name: Get ECR token
+  ansible.builtin.shell: "aws ecr get-login-password --region {{ region }}"
+  register: ecr_token
+- name: Get AWS Account ID for dynamic registry URL
+  amazon.aws.aws_caller_info:
+  register: caller_info
+# - debug: msg={{ caller_info.account }}
+# - debug: msg={{ ecr_token.stdout }}
+- name: Setting fact variables
+  ansible.builtin.set_fact:
+    ecr_registry_url: "{{ caller_info.account }}.dkr.ecr.{{ region }}.amazonaws.com"
+    ecr_registry_token: "{{ ecr_token.stdout  }}"
+- name: Log into ECR registry
+  docker_login:
+    registry_url: "{{ ecr_registry_url }}"
+    debug: yes
+    username: "AWS"
+    password: "{{ ecr_registry_token }}"
+    reauthorize: yes
+  register: ecr_login_output
+- debug: msg={{ ecr_login_output.login_result }}
