@@ -34,7 +34,7 @@ services:
         condition: service_healthy
 
   java-app:
-    image: ${ECR_REPO_URL}:${VERSION_TAG}
+    image: ${ECR_REPO_FULL_NAME}:${VERSION_TAG}
     container_name: java-app
     build:
       context: .
