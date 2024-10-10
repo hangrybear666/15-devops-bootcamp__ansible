@@ -1,51 +1,82 @@
 ---
-- name: Get AWS credentials & login to ECR repository
-  hosts: localhost
+# - name: Get AWS credentials & login to ECR repository
+#   hosts: localhost
+#   roles:
+#     - aws-docker-login-ecr
+
+# - name: Build local image & push it to a ECR repo
+#   hosts: localhost
+#   roles:
+#     - build-and-push-to-ecr
+
+- name: Create new linux user for docker
+  become: true
+  become_method: sudo
+  hosts: all
   roles:
-    - aws-docker-login-ecr
+    - create-permit-docker-user
 
-- name: Build local image & push it to a ECR repo
-  hosts: localhost
-  roles:
-    - build-and-push-to-ecr
+- name: Install Docker & Docker Compose
+  hosts: all
+  become: yes
+  vars:
+    apt_cache_valid_seconds: 86400
+  tasks:
+    - name: Remove prior docker installations
+      ansible.builtin.apt:
+        name:
+          - docker.io
+          - docker-doc
+          - docker-compose
+          - docker-compose-v2
+          - podman-docker
+          - containerd
+        state: absent
 
-# - name: Install Docker & Docker Compose
-#   hosts: all
-#   become: yes
-#   tasks:
-#     - name: Install Docker
-#       yum:
-#         name: docker
-#         update_cache: yes
-#         state: present
-#     - name: Start docker daemon
-#       systemd:
-#         name: docker
-#         state: started
-#     - name: Create docker-compose directory
-#       file:
-#         path: ~/.docker/cli-plugins
-#         state: directory
-#     - name: Get architecture of remote machine
-#       shell: uname -m
-#       register: remote_arch
-#     - name: Install docker-compose
-#       get_url:
-#         url: "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-{{lookup('pipe', 'uname -m')}}"
-#         dest: ~/.docker/cli-plugins/docker-compose
-#         mode: +x
+    - name: Install required system packages
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg2
+        state: latest
+        update_cache: true
+        force_apt_get: yes
 
-# - name: Add ec2-user to docker group
-#   hosts: all
-#   become: yes
-#   tasks:
-#     - name: Add ec2-user to docker group
-#       user:
-#         name: ec2-user
-#         groups: docker
-#         append: yes
-#     - name: Reconnect to server session
-#       meta: reset_connection
+    - name: Create Docker keyrings directory
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Download Docker GPG key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: '0644'
+
+    - name: Add Docker Repository
+      ansible.builtin.apt_repository:
+        repo: deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian bookworm stable
+        state: present
+
+    - name: Update apt and install Docker packages
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: latest
+        update_cache: true
+        force_apt_get: yes
+        cache_valid_time: "{{ apt_cache_valid_seconds }}"
+
+    - name: Start docker daemon
+      ansible.builtin.systemd_service:
+        name: docker
+        state: started
 
 # - name: Start docker containers
 #   hosts: docker_server

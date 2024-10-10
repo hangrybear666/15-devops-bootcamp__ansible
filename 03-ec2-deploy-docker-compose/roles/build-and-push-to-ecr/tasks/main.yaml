@@ -3,6 +3,7 @@
   args:
     chdir: "{{ build_file_path }}"
   register: override_output
+
 - name: Build and push Docker Image
   register: docker_push
   community.docker.docker_image:
@@ -12,19 +13,23 @@
     tag: "{{ java_app_tag }}-{{ java_app_version }}"
     push: true
     source: build
+
 - name: Reset index.html for local filesystem
   ansible.builtin.script: "{{ build_file_path }}/reset-remote-ip-to-java-app.sh {{ hostvars['ec2_instance1']['ansible_host'] }}"
   args:
     chdir: "{{ build_file_path }}"
   register: reset_output
+
 - name: Show index.html override for docker image
   debug:
     msg:
       - "{{ override_output.stdout_lines }}"
+
 - name: Show Docker Build & Push Result
   debug:
     msg:
       - "{{ docker_push.actions }}"
+
 - name: Show index.html reset for local file system
   debug:
     msg:
