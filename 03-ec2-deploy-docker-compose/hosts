@@ -2,8 +2,6 @@
 
 [ec2_instances]
 ec2_instance1
-ec2_instance2 ansible_host=3.127.248.40
-ec2_instance3 ansible_host=3.125.115.191
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3

@@ -2,7 +2,12 @@
   ansible.builtin.set_fact:
     java_image_tag: "{{ java_app_tag }}-{{ java_app_version }}"
 
+# TODO
+# This creates a single java application image with a single remote address hardcoded in index.html
+# Thus, the java app will only resolve to the correct address on one host and not work on the others
+
 - name: Override remote IP in index.html for docker image
+  # TODO only works for ec2_instance1 because this step is executed only once on localhost, and we don't have the inventory_hostname variable available for dynamic ip address retrieval
   ansible.builtin.script: "{{ build_file_path }}/add-remote-ip-to-java-app.sh {{ hostvars['ec2_instance1']['ansible_host'] }}"
   args:
     chdir: "{{ build_file_path }}"
