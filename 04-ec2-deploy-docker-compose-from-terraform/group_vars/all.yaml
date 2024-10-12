@@ -1,0 +1,4 @@
+# variables applying to all groups
+build_file_path: "/home/admin/git/15-devops-bootcamp__ansible/04-ec2-deploy-docker-compose-from-terraform/roles/build-and-push-to-ecr/files"
+linux_user: docker-runner
+ansible_python_interpreter: /usr/bin/python3

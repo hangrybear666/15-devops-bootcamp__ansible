@@ -2,10 +2,10 @@
 coming up
 
 <b><u>The course examples are:</u></b>
-1. Provision 1-n Linode/EC2 Instances /w terraform & use ansible to create linux service-user, install node and npm, then deploy and start a node application
-2. Provision 1-n Linode/EC2 Instances /w terraform & use ansible to install java and deploy nexus artifact repository
-3. Provision 1-n Linode/EC2 Instances /w terraform & use ansible to run a fullstack docker compose application /w AWS ECR image
-
+1. Provision 1-n Linode/EC2 Instances /w terraform & manually start ansible to create linux service-user, install node and npm, then deploy and start a node application
+2. Provision 1-n Linode/EC2 Instances /w terraform & manually start ansible to install java and deploy nexus artifact repository
+3. Provision 1 Linode/EC2 Instance /w terraform & manually start ansible to run a fullstack docker compose application /w AWS ECR image
+4. Provision 1 EC2 Instance /w terraform & <b>automatically</b> start ansible to run a fullstack docker compose application /w AWS ECR image
 <!-- <b><u>The exercise projects are:</u></b> -->
 
 ## Setup
@@ -46,7 +46,7 @@ Follow the steps described in https://docs.aws.amazon.com/cli/latest/userguide/g
 ## Usage (course examples)
 
 <details closed>
-<summary><b>1. Provision 1-n Linode/EC2 Instances /w terraform & use ansible to create linux service-user, install node and npm, then deploy and start a node application</b></summary>
+<summary><b>1. Provision 1-n Linode/EC2 Instances /w terraform & manually start ansible to create linux service-user, install node and npm, then deploy and start a node application</b></summary>
 
 #### a. Create 1-n Linode VPS Servers by following the bonus project 2) in the terraform repo
 
@@ -101,7 +101,7 @@ ansible-playbook -i hosts site.yaml -e "variable_host=linode*"
 -----
 
 <details closed>
-<summary><b>2. Provision 1-n Linode/EC2 Instances /w terraform & use ansible to install java and deploy nexus artifact repository</b></summary>
+<summary><b>2. Provision 1-n Linode/EC2 Instances /w terraform & manually start ansible to install java and deploy nexus artifact repository</b></summary>
 
 #### a. Create 1-n Linode VPS Servers by following the bonus project 2) in the terraform repo
 
@@ -133,13 +133,16 @@ ansible-playbook site.yaml -e "variable_host=linode*"
 -----
 
 <details closed>
-<summary><b>3. Provision 1-n Linode/EC2 Instances /w terraform & use ansible to run a fullstack docker compose application /w AWS ECR image</b></summary>
+<summary><b>3. Provision 1 Linode/EC2 Instance /w terraform & manually start ansible to run a fullstack docker compose application /w AWS ECR image</b></summary>
 
-#### a. Create 1-n EC2 Instances  by following the demo project 2) in the terraform repo
+#### a. Create 1 EC2 Instances by following the demo project 2) in the terraform repo
 
-#### b. Change remote ips and specific configuration values for your workspace
+*Limitation:* Since only one image with one remote address is created in the build step, this playbook currently only supports one instance.
+We would have to build a separate Image for each instance and change the role in `15-devops-bootcamp__ansible/03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/tasks/main.yaml`
 
-- Add your ip addresses to `hosts` file and the `ec2_instance1.yaml` file in `host_vars/` folder respectively
+#### b. Change remote ip and specific configuration values for your workspace
+
+- Add your ip address `ec2_instance1.yaml` file in `host_vars/`
 - Change private key path `ansible_ssh_private_key_file` in `group_vars/all.yaml`
 - Add `region: YOUR_REGION` and `ecr_repo_name: YOUR_REPO_NAME` (just name without URL) to `group_vars/all.yaml` to overwrite the build-and-push-to-ecr role's vars.
 - Overwrite `build_file_path` in `group_vars/all.yaml` to the absolute filepath in your repository for build-and-push-to-ecr role's files folder
@@ -159,7 +162,7 @@ VERSION_TAG=0.9 \
 docker compose -f docker-compose-local.yaml up
 ```
 
-#### d. Run ansible playbook with different host targets, depending on your setup
+#### d. Run ansible playbook
 
 <u>The following roles are included:</u>
 - aws-docker-login-ecr
@@ -174,7 +177,47 @@ docker compose -f docker-compose-local.yaml up
 ansible-playbook site.yaml -e java_app_version="1.8"
 ```
 
+-----
+
+<details closed>
+<summary><b>4. Provision 1 EC2 Instance /w terraform & <b>automatically</b> start ansible to run a fullstack docker compose application /w AWS ECR image</b></summary>
+
+#### a. Change specific configuration values for your workspace
+
+- Add `region: YOUR_REGION` and `ecr_repo_name: YOUR_REPO_NAME` (just name without URL) to `group_vars/all.yaml` to overwrite the build-and-push-to-ecr role's vars.
+- Overwrite `build_file_path` in `group_vars/all.yaml` to the absolute filepath in your repository for build-and-push-to-ecr role's files folder
+
+#### b. Create `.env` file in `04-ec2-deploy-docker-compose-from-terraform/roles/build-and-push-to-ecr/files/java-app/` folder by running the following script, generating random passwords via openssl for you.
+
+```bash
+cd scripts
+./create-exercise-env-vars.sh
+```
+
+<b>Test your java-mysql-phpmyadmin stack locally</b>
+
+```bash
+docker volume rm mysql-data-dir
+cd 04-ec2-deploy-docker-compose-from-terraform/roles/build-and-push-to-ecr/files/java-app/
+VERSION_TAG=0.9 \
+docker compose -f docker-compose-local.yaml up
+```
+
+#### c. The playbook is executed automatically by terraform once the instance has exposed a public IP.
+
+<u>The following roles are included:</u>
+- aws-docker-login-ecr
+- build-and-push-to-ecr
+- create-permit-docker-user
+- install-docker-and-compose
+- install-pip-boto3
+- install-acl-for-non-root-users
+- copy-and-start-docker-compose
+
+#### d. Create 1 EC2 Instance by following the demo project 5) in the terraform repo
+
+https://github.com/hangrybear666/12-devops-bootcamp__terraform
+
 </details>
 
 -----
-

@@ -1,0 +1,10 @@
+# see https://docs.ansible.com/ansible-core/2.17/playbook_guide/playbooks_privilege_escalation.html#risks-of-becoming-an-unprivileged-user
+- name: Update apt repo and cache
+  ansible.builtin.apt:
+    update_cache: yes
+    force_apt_get: yes
+    cache_valid_time: "{{ apt_cache_valid_seconds }}"
+- name: Install Access Control List
+  ansible.builtin.apt:
+    pkg:
+      - acl
