@@ -145,6 +145,15 @@ docker compose -f docker-compose-local.yaml up
 
 #### d. Run ansible playbook with different host targets, depending on your setup
 
+<u>The following roles are included:</u>
+- aws-docker-login-ecr
+- build-and-push-to-ecr
+- create-permit-docker-user
+- install-docker-and-compose
+- install-pip-boto3
+- install-acl-for-non-root-users
+- copy-and-start-docker-compose
+
 ```bash
 ansible-playbook site.yaml -e java_app_version="1.4"
 ```

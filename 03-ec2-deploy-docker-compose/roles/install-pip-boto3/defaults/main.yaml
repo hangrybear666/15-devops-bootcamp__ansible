@@ -1,2 +1,1 @@
-linux_user: docker-runner
 apt_cache_valid_seconds: 86400

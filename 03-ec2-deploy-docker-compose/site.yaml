@@ -26,6 +26,12 @@
   roles:
     - install-docker-and-compose
 
+- name: Install Docker & Docker Compose
+  hosts: all
+  become: yes
+  roles:
+    - install-pip-boto3
+
 # see https://docs.ansible.com/ansible-core/2.17/playbook_guide/playbooks_privilege_escalation.html#risks-of-becoming-an-unprivileged-user
 - name: Install ACL so ansible works for non-root users
   hosts: all
