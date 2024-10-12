@@ -74,6 +74,13 @@ ssh-keyscan -H 321.xxx.xxx.247 >> ~/.ssh/known_hosts
 
 #### d. Run ansible playbook with different host targets, depending on your setup
 
+<u>The following roles are included:</u>
+
+- create-linux-user
+- deploy-node-app
+- install-acl-for-non-root-users
+- install-node-npm
+
 ```bash
 cd 01-linode-deploy-node-app/
 # to run only on linode1
@@ -103,6 +110,14 @@ ansible-playbook -i hosts site.yaml -e "variable_host=linode*"
 - Change private key path `ansible_ssh_private_key_file` in `group_vars/all.yaml`
 
 #### c. Run ansible playbook with different host targets, depending on your setup
+
+<u>The following roles are included:</u>
+
+- check-nexus-availability
+- create-permit-nexus-user
+- download-untar-nexus
+- install-legacy-java
+- start-nexus-binary
 
 ```bash
 cd 02-linode-deploy-nexus-artifact-repo/
@@ -157,7 +172,6 @@ docker compose -f docker-compose-local.yaml up
 ```bash
 ansible-playbook site.yaml -e java_app_version="1.4"
 ```
-docker push 010928217051.dkr.ecr.eu-central-1.amazonaws.com/ansible-imgs:java-app-1.3
 
 </details>
 

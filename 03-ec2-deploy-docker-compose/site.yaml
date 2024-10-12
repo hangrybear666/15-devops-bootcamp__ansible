@@ -11,33 +11,33 @@
   roles:
     - build-and-push-to-ecr
 
-- name: Create new linux user for docker
-  become: true
-  become_method: sudo
-  hosts: all
-  roles:
-    - create-permit-docker-user
+# - name: Create new linux user for docker
+#   become: true
+#   become_method: sudo
+#   hosts: all
+#   roles:
+#     - create-permit-docker-user
 
-- name: Install Docker & Docker Compose
-  hosts: all
-  become: yes
-  vars:
-    debian_docker_distro_url: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian bookworm stable"
-  roles:
-    - install-docker-and-compose
+# - name: Install Docker & Docker Compose
+#   hosts: all
+#   become: yes
+#   vars:
+#     debian_docker_distro_url: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian bookworm stable"
+#   roles:
+#     - install-docker-and-compose
 
-- name: Install Docker & Docker Compose
-  hosts: all
-  become: yes
-  roles:
-    - install-pip-boto3
+# - name: Install Docker & Docker Compose
+#   hosts: all
+#   become: yes
+#   roles:
+#     - install-pip-boto3
 
-# see https://docs.ansible.com/ansible-core/2.17/playbook_guide/playbooks_privilege_escalation.html#risks-of-becoming-an-unprivileged-user
-- name: Install ACL so ansible works for non-root users
-  hosts: all
-  become: true
-  roles:
-    - install-acl-for-non-root-users
+# # see https://docs.ansible.com/ansible-core/2.17/playbook_guide/playbooks_privilege_escalation.html#risks-of-becoming-an-unprivileged-user
+# - name: Install ACL so ansible works for non-root users
+#   hosts: all
+#   become: true
+#   roles:
+#     - install-acl-for-non-root-users
 
 - name: Get AWS credentials & login to ECR repository
   hosts: all
@@ -49,25 +49,36 @@
   roles:
     - aws-docker-login-ecr
 
-# - name: Start docker containers
-#   hosts: all
-#   tasks:
-#     - name: Copy AWS config
-#       ansible.builtin.copy:
-#         src: "~/.aws/config"
-#         dest: /home/{{ linux_user }}/.aws/config
-#     - name: Copy AWS credentials
-#       ansible.builtin.copy:
-#         src: "~/.aws/credentials"
-#         dest: /home/{{ linux_user }}/.aws/credentials
-#     - name: Copy docker compose
-#       ansible.builtin.copy:
-#         src: "{{ build_file_path }}/java-app/docker-compose-remote.yaml"
-#         dest: /home/{{ linux_user }}/docker-compose.yaml
-#       docker_login:
-#         username: nanatwn
-#     - name: Docker login
-#         password: "{{docker_password}}"
-#     - name: Start containers from compose
-#       community.docker.docker_compose_v2:
-#         project_src: /home/ec2-user
+- name: Start docker containers
+  hosts: all
+  become: true
+  become_user: "{{ linux_user }}"
+  become_method: sudo
+  tasks:
+    - name: Copy docker compose
+      ansible.builtin.copy:
+        src: "{{ build_file_path }}/java-app/docker-compose-remote.yaml"
+        dest: /home/{{ linux_user }}/docker-compose.yaml
+    - name: Copy .env file
+      ansible.builtin.copy:
+        src: "{{ build_file_path }}/java-app/.env"
+        dest: /home/{{ linux_user }}/.env
+    - name: Copy using inline content
+      ansible.builtin.copy:
+        content: |
+          ECR_REPO_FULL_NAME={{ ecr_registry_full_name }}
+          VERSION_TAG={{ hostvars['localhost']['java_image_tag'] }}
+        dest: /home/{{ linux_user }}/.env_ansible
+    - name: Tear down existing containers
+      community.docker.docker_compose_v2:
+        project_src: /home/{{ linux_user }}
+        state: absent
+    - name: Start containers from compose
+      community.docker.docker_compose_v2:
+        project_src: /home/{{ linux_user }}
+        state: present
+        env_files:
+          - /home/{{ linux_user }}/.env
+          - /home/{{ linux_user }}/.env_ansible
+      register: docker_compose_out
+    - debug: msg={{ docker_compose_out }}

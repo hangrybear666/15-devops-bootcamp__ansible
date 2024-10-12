@@ -1,3 +1,7 @@
+- name: Setting fact variables
+  ansible.builtin.set_fact:
+    java_image_tag: "{{ java_app_tag }}-{{ java_app_version }}"
+
 - name: Override remote IP in index.html for docker image
   ansible.builtin.script: "{{ build_file_path }}/add-remote-ip-to-java-app.sh {{ hostvars['ec2_instance1']['ansible_host'] }}"
   args:
@@ -10,7 +14,7 @@
     build:
       path: "{{ build_file_path }}/java-app"
     name: "{{ ecr_registry_full_name }}"
-    tag: "{{ java_app_tag }}-{{ java_app_version }}"
+    tag: "{{ java_image_tag }}"
     push: true
     source: build
 
