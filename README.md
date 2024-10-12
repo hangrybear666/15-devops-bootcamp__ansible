@@ -170,7 +170,7 @@ docker compose -f docker-compose-local.yaml up
 - copy-and-start-docker-compose
 
 ```bash
-ansible-playbook site.yaml -e java_app_version="1.4"
+ansible-playbook site.yaml -e java_app_version="1.8"
 ```
 
 </details>
