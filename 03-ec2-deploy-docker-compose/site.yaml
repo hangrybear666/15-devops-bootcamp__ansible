@@ -11,33 +11,33 @@
   roles:
     - build-and-push-to-ecr
 
-# - name: Create new linux user for docker
-#   become: true
-#   become_method: sudo
-#   hosts: all
-#   roles:
-#     - create-permit-docker-user
+- name: Create new linux user for docker
+  become: true
+  become_method: sudo
+  hosts: all
+  roles:
+    - create-permit-docker-user
 
-# - name: Install Docker & Docker Compose
-#   hosts: all
-#   become: yes
-#   vars:
-#     debian_docker_distro_url: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian bookworm stable"
-#   roles:
-#     - install-docker-and-compose
+- name: Install Docker & Docker Compose
+  hosts: all
+  become: yes
+  vars:
+    debian_docker_distro_url: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian bookworm stable"
+  roles:
+    - install-docker-and-compose
 
-# - name: Install Docker & Docker Compose
-#   hosts: all
-#   become: yes
-#   roles:
-#     - install-pip-boto3
+- name: Install Docker & Docker Compose
+  hosts: all
+  become: yes
+  roles:
+    - install-pip-boto3
 
-# # see https://docs.ansible.com/ansible-core/2.17/playbook_guide/playbooks_privilege_escalation.html#risks-of-becoming-an-unprivileged-user
-# - name: Install ACL so ansible works for non-root users
-#   hosts: all
-#   become: true
-#   roles:
-#     - install-acl-for-non-root-users
+# see https://docs.ansible.com/ansible-core/2.17/playbook_guide/playbooks_privilege_escalation.html#risks-of-becoming-an-unprivileged-user
+- name: Install ACL so ansible works for non-root users
+  hosts: all
+  become: true
+  roles:
+    - install-acl-for-non-root-users
 
 - name: Get AWS credentials & login to ECR repository
   hosts: all

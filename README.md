@@ -4,6 +4,7 @@ coming up
 <b><u>The course examples are:</u></b>
 1. Provision 1-n Linode/EC2 Instances /w terraform & use ansible to create linux service-user, install node and npm, then deploy and start a node application
 2. Provision 1-n Linode/EC2 Instances /w terraform & use ansible to install java and deploy nexus artifact repository
+3. Provision 1-n Linode/EC2 Instances /w terraform & use ansible to run a fullstack docker compose application /w AWS ECR image
 
 <!-- <b><u>The exercise projects are:</u></b> -->
 
@@ -132,7 +133,7 @@ ansible-playbook site.yaml -e "variable_host=linode*"
 -----
 
 <details closed>
-<summary><b>3. </b></summary>
+<summary><b>3. Provision 1-n Linode/EC2 Instances /w terraform & use ansible to run a fullstack docker compose application /w AWS ECR image</b></summary>
 
 #### a. Create 1-n EC2 Instances  by following the demo project 2) in the terraform repo
 
