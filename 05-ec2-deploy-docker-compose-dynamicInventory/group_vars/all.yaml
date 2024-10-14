@@ -1,0 +1,7 @@
+# variables applying to all groups
+build_file_path: "/home/admin/git/15-devops-bootcamp__ansible/05-ec2-deploy-docker-compose-dynamicInventory/roles/build-and-push-to-ecr/files"
+linux_user: docker-runner
+
+ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+ansible_user: admin
+ansible_python_interpreter: /usr/bin/python3

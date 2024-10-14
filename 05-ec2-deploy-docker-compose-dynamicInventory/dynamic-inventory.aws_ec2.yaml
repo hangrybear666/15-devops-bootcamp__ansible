@@ -1,0 +1,9 @@
+plugin: amazon.aws.aws_ec2
+regions:
+  - eu-central-1
+filters:
+  tag:Name: dev-server
+# to use public ipv4 address instead of defaulting to dns hostname
+# our instances run with private dns hostnames only not exposed for ingress
+compose:
+  ansible_host: public_ip_address

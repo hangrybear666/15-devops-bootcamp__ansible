@@ -41,7 +41,7 @@
   roles:
     - install-docker-and-compose
 
-- name: Install Docker & Docker Compose
+- name: Install Pip & Boto 3 for AWS CLI dependencies
   hosts: all
   become: yes
   roles:
