@@ -1,7 +1,7 @@
 pipeline {
   agent any
   environment {
-    ANSIBLE_SERVER = "172.104.139.219"
+    ANSIBLE_CONTROL_NODE_IP = "172.104.139.219"
     JAVA_VERSION = "2.0"
   }
   stages {
@@ -17,10 +17,10 @@ pipeline {
           script {
             echo "copying all neccessary files to ansible control node"
             sshagent(['control-node-pk']) {
-              sh "scp -o StrictHostKeyChecking=no -r ./* root@${ANSIBLE_SERVER}:/root/07-jenkins-ansible-integration"
+              sh "scp -o StrictHostKeyChecking=no -r ./* root@${ANSIBLE_CONTROL_NODE_IP}:/root/07-jenkins-ansible-integration"
 
               withCredentials([sshUserPrivateKey(credentialsId: 'ec2-targets-pk', keyFileVariable: 'keyfile', usernameVariable: 'user')]) {
-                sh 'scp $keyfile root@$ANSIBLE_SERVER:/root/.ssh/ec2-targets-pk.pem'
+                sh 'scp $keyfile root@$ANSIBLE_CONTROL_NODE_IP:/root/.ssh/ec2-targets-pk'
               }
             }
           }
@@ -32,7 +32,7 @@ pipeline {
         dir('07-jenkins-ansible-integration') {
           script {
             echo "executing ansible playbook on control node"
-            def controlNode = "root@${ANSIBLE_SERVER}"
+            def controlNode = "root@${ANSIBLE_CONTROL_NODE_IP}"
             sshagent(['control-node-pk']) {
               sh """
               ssh -o StrictHostKeyChecking=no ${controlNode} "

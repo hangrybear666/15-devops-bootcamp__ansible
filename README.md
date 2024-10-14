@@ -370,7 +370,7 @@ scp ~/.aws/credentials root@172.104.139.219:/root/.aws/credentials
 
 #### e. Change specific configuration values for your workspace
 
-- Change environment variable ANSIBLE_SERVER in `Jenkinsfile` to contain your control node IP address.
+- Change environment variable `ANSIBLE_CONTROL_NODE_IP` in `Jenkinsfile` to contain your control node IP address.
 - Change private key path `ansible_ssh_private_key_file` in `group_vars/all.yaml`
 
 #### f. Configure Jenkins Pipeline & Server

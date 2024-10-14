@@ -3,11 +3,11 @@
 
 python_location=$(which python3)
 pip_version=$(python3 -m pip -V)
-pip_version_substr=${pip_version:0:3}
 if [ ! -z $python_location ]
   then
     echo "Python located in $python_location"
   else
+    # install python
     sudo apt-get update && sudo apt-get install -y python3
 fi
 
@@ -15,16 +15,16 @@ if [ $pip_version_substr == "pip" ]
   then
     echo "pip version: $pip_version"
   else
-    echo $pip_version_substr
+    # install pip
     sudo apt-get update && sudo apt-get install -y python3-pip
 fi
 
 sudo apt-get update && sudo apt-get install -y python3-venv
-sudo apt-get install -y python3-boto3
+# sudo apt-get install -y python3-boto3
 sudo python3 -m venv .venv
 source /root/.venv/bin/activate
 pip install ansible
-# dependencies for aws cli integration
+# dependencies in vertiual env for aws cli integration
 pip install boto3
 pip install packaging
 pip install requests
