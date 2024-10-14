@@ -1,6 +1,0 @@
-[linodes]
-linode1
-
-[ec2_instances]
-
-[all:vars]

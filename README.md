@@ -8,6 +8,7 @@ coming up
 4. Provision 1 EC2 Instance /w terraform & <b>automatically</b> start ansible to run a fullstack docker compose application /w AWS ECR image
 5. Provision 1 EC2 Instance /w terraform & manually start ansible with <b>dynamic inventory</b> to run a fullstack docker compose application /w AWS ECR image
 6. Provision AWS EKS cluster via eksctl & manually start ansible to automatically provide a basic kubernetes deployment
+7. Jenkins CI/CD integration to setup an EC2 ansible control node & then run ansible playbook deploying a java-maven app on 1-n EC2 instances from pipeline
 <!-- <b><u>The exercise projects are:</u></b> -->
 
 ## Setup
@@ -324,22 +325,69 @@ ansible-playbook site.yaml
 
 -----
 
-
 <details closed>
-<summary><b>7. </b></summary>
+<summary><b>7. Jenkins CI/CD integration to setup an EC2 ansible control node & then run ansible playbook deploying a java-maven app on 1-n EC2 instances from pipeline</b></summary>
 
 #### a. Create Jenkins Server by following bonus project 1 in terraform repo
 
+<u>Bonus Project 1:</u>
 https://github.com/hangrybear666/12-devops-bootcamp__terraform
 
-#### b. Change specific configuration values for your workspace
+#### b. Create Linode Instance for Ansible Control Node by following bonus project 2 in terraform repo
 
+*Note:* Save the ssh private key for creating jenkins credentials later.
+
+<u>Bonus Project 2:</u>
+https://github.com/hangrybear666/12-devops-bootcamp__terraform
+
+
+#### c. Create 1-n EC2 Instances for java app deployment via ansible playbook by following demo project 2 in terraform repo
+
+*Note:* Save the ssh private key for creating jenkins credentials later.
+
+<u>Demo Project 2:</u>
+https://github.com/hangrybear666/12-devops-bootcamp__terraform
+
+
+#### d. Install required ansible dependencies on Linode ansible control node via ssh
+
+```bash
+cd scripts/
+ssh -i ~/.ssh/id_ed25519 root@172.104.139.219 'bash -s' < install-ansible-control-node.sh
+```
+
+#### e. Change specific configuration values for your workspace
+
+- Change environment variable ANSIBLE_SERVER in `Jenkinsfile` to contain your control node IP address.
 - Change private key path `ansible_ssh_private_key_file` in `group_vars/all.yaml`
 
-#### c.
+#### f. Configure Jenkins Pipeline & Server
+
+**Create Secrets**
+- Create Username:Password with the id `git-creds` with either your username or jenkins and an API Token as password
+<!-- - Create Secret Text with the id `aws_access_key_id` with your AWS IAM Account's Access Key ID (or better a dedicated Jenkins IAM Account) -->
+<!-- - Create Secret Text with the id `aws_secret_access_key` with your AWS IAM Account's Secret Access Key (or better a dedicated Jenkins IAM Account) -->
+- Create SSH Username:Private Key with the id `control-node-pk` and provide the private key used for Linode Server Setup. User is `root`
+- Create SSH Username:Private Key with the id `ec2-targets-pk` and provide the private key used for EC2 Instances Setup. User is `ec2-user`
+
+**Create Pipeline**
+- Create a new multibranch pipeline named `15_ansible` with GIT Token credentials and add https://github.com/hangrybear666/15-devops-bootcamp__ansible.git
+- Jenkinsfile in pipeline is located under `07-jenkins-ansible-integration/Jenkinsfile`
+
+**Configure Jenkins Plugins**
+- Add Maven Plugin under Manage Jenkins -> Tools -> Maven and name it Maven.
+- Install SSH Agent Plugin under Manage Jenkins -> Plugins -> Available Plugins
+
+#### g.
 <u>The following roles are included:</u>
 
 - asd
+
+```bash
+ssh -i ~/.ssh/id_ed25519 root@172.104.139.219
+source /root/.venv/bin/activate
+ansible --version
+```
 
 </details>
 
