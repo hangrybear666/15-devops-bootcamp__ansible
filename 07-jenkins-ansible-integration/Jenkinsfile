@@ -4,15 +4,23 @@ pipeline {
     ANSIBLE_SERVER = "172.104.139.219"
   }
   stages {
+    // stage("Git Checkout SCM") {
+    //   steps {
+    //     git branch: 'main', credentialsId: 'git-creds', url: 'https://github.com/hangrybear666/15-devops-bootcamp__ansible.git'
+    //   }
+    // }
+
     stage("copy files to ansible server") {
       steps {
-        script {
-          echo "copying all neccessary files to ansible control node"
-          sshagent(['control-node-pk']) {
-            sh "scp -o StrictHostKeyChecking=no ./* root@${ANSIBLE_SERVER}:/root/07-jenkins-ansible-integration"
+        dir('07-jenkins-ansible-integration') {
+          script {
+            echo "copying all neccessary files to ansible control node"
+            sshagent(['control-node-pk']) {
+              sh "scp -o StrictHostKeyChecking=no -r ./* root@${ANSIBLE_SERVER}:/root/07-jenkins-ansible-integration"
 
-            withCredentials([sshUserPrivateKey(credentialsId: 'ec2-targets-pk', keyFileVariable: 'keyfile', usernameVariable: 'user')]) {
-              sh 'scp $keyfile root@$ANSIBLE_SERVER:/root/.ssh/ec2-targets-pk.pem'
+              withCredentials([sshUserPrivateKey(credentialsId: 'ec2-targets-pk', keyFileVariable: 'keyfile', usernameVariable: 'user')]) {
+                sh 'scp $keyfile root@$ANSIBLE_SERVER:/root/.ssh/ec2-targets-pk.pem'
+              }
             }
           }
         }
