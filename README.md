@@ -155,6 +155,7 @@ We would have to build a separate Image for each instance and change the role in
 #### c. Create `.env` file in `03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/files/java-app/` folder by running the following script, generating random passwords via openssl for you.
 
 ```bash
+# required only once for all demo projects
 cd scripts
 ./create-exercise-env-vars.sh
 ```
@@ -197,6 +198,7 @@ ansible-playbook site.yaml -e java_app_version="1.8"
 #### b. Create `.env` file in `04-ec2-deploy-docker-compose-from-terraform/roles/build-and-push-to-ecr/files/java-app/` folder by running the following script, generating random passwords via openssl for you.
 
 ```bash
+# required only once for all demo projects
 cd scripts
 ./create-exercise-env-vars.sh
 ```
@@ -248,6 +250,7 @@ https://github.com/hangrybear666/12-devops-bootcamp__terraform
 #### c. Create `.env` file in `05-ec2-deploy-docker-compose-dynamicInventory/roles/build-and-push-to-ecr/files/java-app/` folder by running the following script, generating random passwords via openssl for you.
 
 ```bash
+# required only once for all demo projects
 cd scripts
 ./create-exercise-env-vars.sh
 ```
@@ -368,16 +371,25 @@ ssh -i ~/.ssh/id_ed25519 root@172.104.237.64 'bash -s' < setup-ansible-control-n
 scp -r ~/.aws/. root@172.104.237.64:/root/.aws/
 ```
 
-#### e. Change specific configuration values for your workspace
+#### e. Create `.env` file in `07-jenkins-ansible-integration/roles/build-and-push-to-ecr/files/java-app/` folder by running the following script, generating random passwords via openssl for you.
+
+```bash
+# required only once for all demo projects
+cd scripts
+./create-exercise-env-vars.sh
+```
+
+#### f. Change specific configuration values for your workspace
 
 - Change environment variable `ANSIBLE_CONTROL_NODE_IP` in `Jenkinsfile` to contain your control node IP address.
 
-#### f. Configure Jenkins Pipeline & Server
+#### g. Configure Jenkins Pipeline & Server
 
 **Create Secrets**
 - Create Username:Password with the id `git-creds` with either your username or jenkins and an API Token as password
 - Create SSH Username:Private Key with the id `control-node-pk` and provide the private key used for Linode Server Setup. User is `root`
-- Create SSH Username:Private Key with the id `ec2-targets-pk` and provide the private key used for EC2 Instances Setup. User is `ec2-user`
+- Create SSH Username:Private Key with the id `ec2-targets-pk` and provide the private key used for EC2 Instances Setup. User is `admin`
+- Create Secret Text with the id `ansible-java-app-env` and copy the outout of step 3) into it (or run $(cat 07-jenkins-ansible-integration/roles/build-and-push-to-ecr/files/java-app/.env))
 
 **Create Pipeline**
 - Create a new multibranch pipeline named `15_ansible` with GIT Token credentials and add https://github.com/hangrybear666/15-devops-bootcamp__ansible.git
@@ -386,7 +398,7 @@ scp -r ~/.aws/. root@172.104.237.64:/root/.aws/
 **Configure Jenkins Plugins**
 - Install SSH Agent Plugin under Manage Jenkins -> Plugins -> Available Plugins
 
-#### g. Ansible Playbook being executed by control node
+#### h. Ansible Playbook being executed by control node
 
 <u>The following roles are included:</u>
 - install-aws-plugin-dependencies

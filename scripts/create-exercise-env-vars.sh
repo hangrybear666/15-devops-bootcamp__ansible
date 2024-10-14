@@ -26,9 +26,11 @@ DB_PWD=$RANDOM_PASSWORD" > 03-ec2-deploy-docker-compose/roles/build-and-push-to-
 
 echo "Created .env file with secrets in 03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/files/java-app/ folder."
 echo "Created .env file with secrets in 04-ec2-deploy-docker-compose-from-terraform/roles/build-and-push-to-ecr/files/java-app/ folder."
-echo "Created .env file with secrets in 05-ec2-deploy-docker-compose-dynamicInventory/roles/build-and-push-to-ecr/files/java-app/ folder.
+echo "Created .env file with secrets in 05-ec2-deploy-docker-compose-dynamicInventory/roles/build-and-push-to-ecr/files/java-app/ folder."
+echo "Created .env file with secrets in 07-jenkins-ansible-integration/roles/build-and-push-to-ecr/files/java-app/ folder.
 --------------------------------"
 
 cp 03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/files/java-app/.env 04-ec2-deploy-docker-compose-from-terraform/roles/build-and-push-to-ecr/files/java-app/.env
 cp 03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/files/java-app/.env 05-ec2-deploy-docker-compose-dynamicInventory/roles/build-and-push-to-ecr/files/java-app/.env
-cat 05-ec2-deploy-docker-compose-dynamicInventory/roles/build-and-push-to-ecr/files/java-app/.env
+cp 03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/files/java-app/.env 07-jenkins-ansible-integration/roles/build-and-push-to-ecr/files/java-app/.env
+cat 07-jenkins-ansible-integration/roles/build-and-push-to-ecr/files/java-app/.env

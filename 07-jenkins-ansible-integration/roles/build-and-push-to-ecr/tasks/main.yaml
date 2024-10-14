@@ -7,8 +7,8 @@
 # Thus, the java app will only resolve to the correct address on one host and not work on the others
 
 - name: Override remote IP in index.html for docker image
-  # TODO only works for first instance because this step is executed only once on localhost, and we don't have the inventory_hostname variable available for dynamic ip address retrieval
-  ansible.builtin.script: "{{ build_file_path }}/add-remote-ip-to-java-app.sh {{ hostvars[groups['all'][0]]['inventory_hostname'] }}"
+  # TODO only works for first instance because this step is executed only once on localhost, and we don't have the ansible_host variable available for dynamic ip address retrieval
+  ansible.builtin.script: "{{ build_file_path }}/add-remote-ip-to-java-app.sh {{ hostvars[groups['all'][0]]['ansible_host'] }}"
   args:
     chdir: "{{ build_file_path }}"
   register: override_output
@@ -24,7 +24,7 @@
     source: build
 
 - name: Reset index.html for local filesystem
-  ansible.builtin.script: "{{ build_file_path }}/reset-remote-ip-to-java-app.sh {{ hostvars[groups['all'][0]]['inventory_hostname'] }}"
+  ansible.builtin.script: "{{ build_file_path }}/reset-remote-ip-to-java-app.sh {{ hostvars[groups['all'][0]]['ansible_host'] }}"
   args:
     chdir: "{{ build_file_path }}"
   register: reset_output

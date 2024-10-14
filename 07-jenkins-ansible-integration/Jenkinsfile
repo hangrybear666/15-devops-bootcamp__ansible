@@ -17,8 +17,15 @@ pipeline {
           script {
             echo "copying all neccessary files to ansible control node"
             sshagent(['control-node-pk']) {
+              // copy entire ansible work directory to control node
               sh "scp -o StrictHostKeyChecking=no -r ./* root@${ANSIBLE_CONTROL_NODE_IP}:/root/07-jenkins-ansible-integration"
 
+              // copy java-app .env file to control node
+              withCredentials([string(credentialsId: 'aws_access_key_id', variable: 'env')]) {
+                  sh 'echo $env > /root/07-jenkins-ansible-integration/roles/build-and-push-to-ecr/files/java-app/.env'
+              }
+
+              // copy private key file for ssh access to target deployment servers
               withCredentials([sshUserPrivateKey(credentialsId: 'ec2-targets-pk', keyFileVariable: 'keyfile', usernameVariable: 'user')]) {
                 sh 'scp $keyfile root@$ANSIBLE_CONTROL_NODE_IP:/root/.ssh/ec2-targets-pk'
               }
