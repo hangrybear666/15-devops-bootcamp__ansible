@@ -1,7 +1,7 @@
 pipeline {
   agent any
   environment {
-    ANSIBLE_CONTROL_NODE_IP = "172.104.139.219"
+    ANSIBLE_CONTROL_NODE_IP = "172.104.237.64"
     JAVA_VERSION = "2.0"
   }
   stages {

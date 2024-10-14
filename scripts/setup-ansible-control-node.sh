@@ -41,3 +41,7 @@ echo "Ansible installed under $(which ansible)"
 echo "Ansible version:"
 ansible --version
 
+echo "" && echo "##################################"
+echo "AWS CLI installed under $(which aws)"
+echo "AWS CLI  version:"
+aws --version
