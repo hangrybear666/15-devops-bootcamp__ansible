@@ -389,7 +389,7 @@ cd scripts
 - Create Username:Password with the id `git-creds` with either your username or jenkins and an API Token as password
 - Create SSH Username:Private Key with the id `control-node-pk` and provide the private key used for Linode Server Setup. User is `root`
 - Create SSH Username:Private Key with the id `ec2-targets-pk` and provide the private key used for EC2 Instances Setup. User is `admin`
-- Create Secret Text with the id `ansible-java-app-env` and copy the outout of step 3) into it (or run $(cat 07-jenkins-ansible-integration/roles/build-and-push-to-ecr/files/java-app/.env))
+- Create Secret File with the id `ansible-java-app-env` and copy the outout of step 3) into it (or run $(cat 07-jenkins-ansible-integration/roles/build-and-push-to-ecr/files/java-app/.env))
 
 **Create Pipeline**
 - Create a new multibranch pipeline named `15_ansible` with GIT Token credentials and add https://github.com/hangrybear666/15-devops-bootcamp__ansible.git
