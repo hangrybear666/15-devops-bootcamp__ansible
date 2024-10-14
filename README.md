@@ -1,5 +1,5 @@
 # 15-devops-bootcamp__ansible
-coming up
+Terraform provisioning & Ansible roles to automate installation, config & deployment on remote instances. Includes dynamic inventory, automatic Ansible provisioning, and a Jenkins CI/CD pipeline integration.
 
 <b><u>The course examples are:</u></b>
 1. Provision 1-n Linode/EC2 Instances /w terraform & manually start ansible to create linux service-user, install node and npm, then deploy and start a node application
