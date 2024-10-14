@@ -1,0 +1,12 @@
+- name: Create User Group
+  ansible.builtin.group:
+    name: "{{ user_group }}"
+    system: true
+- name: Create linux user
+  ansible.builtin.user:
+    name: "{{ linux_user }}"
+    comment: "{{ linux_user_comment }}"
+    password: '*' # disabled
+    group: "{{ user_group }}"
+    create_home: True
+    shell: /bin/bash

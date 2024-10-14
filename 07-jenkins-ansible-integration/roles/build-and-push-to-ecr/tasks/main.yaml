@@ -1,0 +1,45 @@
+- name: Setting fact variables
+  ansible.builtin.set_fact:
+    java_image_tag: "{{ java_app_tag }}-{{ java_app_version }}"
+
+# TODO
+# This creates a single java application image with a single remote address hardcoded in index.html
+# Thus, the java app will only resolve to the correct address on one host and not work on the others
+
+- name: Override remote IP in index.html for docker image
+  # TODO only works for first instance because this step is executed only once on localhost, and we don't have the inventory_hostname variable available for dynamic ip address retrieval
+  ansible.builtin.script: "{{ build_file_path }}/add-remote-ip-to-java-app.sh {{ hostvars[groups['all'][0]]['inventory_hostname'] }}"
+  args:
+    chdir: "{{ build_file_path }}"
+  register: override_output
+
+- name: Build and push Docker Image
+  register: docker_push
+  community.docker.docker_image:
+    build:
+      path: "{{ build_file_path }}/java-app"
+    name: "{{ ecr_registry_full_name }}"
+    tag: "{{ java_image_tag }}"
+    push: true
+    source: build
+
+- name: Reset index.html for local filesystem
+  ansible.builtin.script: "{{ build_file_path }}/reset-remote-ip-to-java-app.sh {{ hostvars[groups['all'][0]]['inventory_hostname'] }}"
+  args:
+    chdir: "{{ build_file_path }}"
+  register: reset_output
+
+- name: Show index.html override for docker image
+  debug:
+    msg:
+      - "{{ override_output.stdout_lines }}"
+
+- name: Show Docker Build & Push Result
+  debug:
+    msg:
+      - "{{ docker_push.actions }}"
+
+- name: Show index.html reset for local file system
+  debug:
+    msg:
+      - "{{ reset_output.stdout_lines }}"

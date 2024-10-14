@@ -5,3 +5,68 @@
   roles:
     - install-aws-plugin-dependencies
 
+- name: Install Docker & Docker Compose Locally
+  hosts: localhost
+  become: true
+  vars:
+    debian_docker_distro_url: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian bookworm stable"
+  roles:
+    - install-docker-and-compose
+
+- name: Get AWS credentials & login to ECR repository
+  hosts: localhost
+  vars:
+    run_on_remote: false
+  roles:
+    - aws-docker-login-ecr
+
+- name: Build local image & push it to a ECR repo
+  hosts: localhost
+  roles:
+    - build-and-push-to-ecr
+
+- name: Create new linux user for docker
+  become: true
+  become_method: sudo
+  hosts: all
+  roles:
+    - create-permit-docker-user
+
+- name: Install Docker & Docker Compose Remotely
+  hosts: all
+  become: true
+  vars:
+    debian_docker_distro_url: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian bookworm stable"
+  roles:
+    - install-docker-and-compose
+
+- name: Install Pip & Boto 3 for AWS CLI dependencies
+  hosts: all
+  become: true
+  roles:
+    - install-pip-boto3
+
+# see https://docs.ansible.com/ansible-core/2.17/playbook_guide/playbooks_privilege_escalation.html#risks-of-becoming-an-unprivileged-user
+- name: Install ACL so ansible works for non-root users
+  hosts: all
+  become: true
+  roles:
+    - install-acl-for-non-root-users
+
+- name: Get AWS credentials & login to ECR repository
+  hosts: all
+  become: true
+  become_user: "{{ linux_user }}"
+  become_method: sudo
+  vars:
+    run_on_remote: true
+  roles:
+    - aws-docker-login-ecr
+
+- name: Start docker containers
+  hosts: all
+  become: true
+  become_user: "{{ linux_user }}"
+  become_method: sudo
+  roles:
+    - copy-and-start-docker-compose

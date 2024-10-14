@@ -1,0 +1,40 @@
+- name: Copy docker compose
+  ansible.builtin.copy:
+    src: "{{ build_file_path }}/java-app/docker-compose-remote.yaml"
+    dest: /home/{{ linux_user }}/docker-compose.yaml
+- name: Copy .env file
+  ansible.builtin.copy:
+    src: "{{ build_file_path }}/java-app/.env"
+    dest: /home/{{ linux_user }}/.env
+- name: Copy using inline content
+  ansible.builtin.copy:
+    content: |
+      ECR_REPO_FULL_NAME={{ ecr_registry_full_name }}
+      VERSION_TAG={{ hostvars['localhost']['java_image_tag'] }}
+    dest: /home/{{ linux_user }}/.env_ansible
+- name: Tear down existing containers
+  community.docker.docker_compose_v2:
+    project_src: /home/{{ linux_user }}
+    state: absent
+- name: Start containers from compose
+  community.docker.docker_compose_v2:
+    project_src: /home/{{ linux_user }}
+    state: present
+    env_files:
+      - /home/{{ linux_user }}/.env
+      - /home/{{ linux_user }}/.env_ansible
+  register: docker_compose_out
+- name: Verify that java-app and db services are running
+  ansible.builtin.assert:
+    that:
+      - java_app.State == 'running'
+      - mysqldb.State == 'running'
+      - phpmyadmin.State == 'running'
+  vars:
+    java_app: >-
+      {{ docker_compose_out.containers | selectattr("Service", "equalto", "java-app") | first }}
+    mysqldb: >-
+      {{ docker_compose_out.containers | selectattr("Service", "equalto", "mysqldb") | first }}
+    phpmyadmin: >-
+      {{ docker_compose_out.containers | selectattr("Service", "equalto", "phpmyadmin") | first }}
+# - debug: msg={{ docker_compose_out }}

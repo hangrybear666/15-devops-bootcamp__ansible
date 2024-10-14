@@ -8,7 +8,7 @@ coming up
 4. Provision 1 EC2 Instance /w terraform & <b>automatically</b> start ansible to run a fullstack docker compose application /w AWS ECR image
 5. Provision 1 EC2 Instance /w terraform & manually start ansible with <b>dynamic inventory</b> to run a fullstack docker compose application /w AWS ECR image
 6. Provision AWS EKS cluster via eksctl & manually start ansible to automatically provide a basic kubernetes deployment
-7. Jenkins CI/CD integration to setup an EC2 ansible control node & then run ansible playbook deploying a java-maven app on 1-n EC2 instances from pipeline
+7. Jenkins CI/CD integration to setup an EC2 ansible control node & then run ansible playbook deploying a java-maven app on 1 EC2 instance from pipeline
 <!-- <b><u>The exercise projects are:</u></b> -->
 
 ## Setup
@@ -235,7 +235,7 @@ https://github.com/hangrybear666/12-devops-bootcamp__terraform
 #### a. Create 1 EC2 Instance by following the demo project 2) in the terraform repo
 
 *Limitation:* Since only one image with one remote address is created in the build step, this playbook currently only supports one instance.
-We would have to build a separate Image for each instance and change the role in `15-devops-bootcamp__ansible/03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/tasks/main.yaml`
+We would have to build a separate Image for each instance and change the role in `15-devops-bootcamp__ansible/05-ec2-deploy-docker-compose-dynamicInventory/roles/build-and-push-to-ecr/tasks/main.yaml`
 
 https://github.com/hangrybear666/12-devops-bootcamp__terraform
 
@@ -341,7 +341,10 @@ https://github.com/hangrybear666/12-devops-bootcamp__terraform
 https://github.com/hangrybear666/12-devops-bootcamp__terraform
 
 
-#### c. Create 1-n EC2 Instances for java app deployment via ansible playbook by following demo project 2 in terraform repo
+#### c. Create 1 EC2 Instance for java app deployment via ansible playbook by following demo project 2 in terraform repo
+
+*Limitation:* Since only one image with one remote address is created in the build step, this playbook currently only supports one instance.
+We would have to build a separate Image for each instance and change the role in `15-devops-bootcamp__ansible/07-jenkins-ansible-integration/roles/build-and-push-to-ecr/tasks/main.yaml`
 
 *Note:* Save the ssh private key for creating jenkins credentials later.
 
@@ -349,11 +352,26 @@ https://github.com/hangrybear666/12-devops-bootcamp__terraform
 https://github.com/hangrybear666/12-devops-bootcamp__terraform
 
 
-#### d. Install required ansible dependencies on Linode ansible control node via ssh
+#### d. Install required ansible dependencies on Linode ansible control node via ssh and configure via scp
+
+*NOTE:* Replace ssh target ip with your own.
+
+- Install Ansible and python dependencies via script
+- Install AWS CLI via explicit commands
+- Copy AWS Config and Credentials via scp
 
 ```bash
 cd scripts/
 ssh -i ~/.ssh/id_ed25519 root@172.104.139.219 'bash -s' < install-ansible-control-node.sh
+
+ssh -i ~/.ssh/id_ed25519 root@172.104.139.219
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+sudo apt-get update && sudo apt-get install -y unzip && unzip awscliv2.zip
+sudo ./aws/install
+mkdir /root/.aws
+
+scp ~/.aws/config root@172.104.139.219:/root/.aws/config
+scp ~/.aws/credentials root@172.104.139.219:/root/.aws/credentials
 ```
 
 #### e. Change specific configuration values for your workspace
@@ -379,14 +397,19 @@ ssh -i ~/.ssh/id_ed25519 root@172.104.139.219 'bash -s' < install-ansible-contro
 - Install SSH Agent Plugin under Manage Jenkins -> Plugins -> Available Plugins
 
 #### g.
-<u>The following roles are included:</u>
 
-- asd
+<u>The following roles are included:</u>
+- install-aws-plugin-dependencies
+- aws-docker-login-ecr
+- build-and-push-to-ecr
+- create-permit-docker-user
+- install-docker-and-compose
+- install-pip-boto3
+- install-acl-for-non-root-users
+- copy-and-start-docker-compose
 
 ```bash
-ssh -i ~/.ssh/id_ed25519 root@172.104.139.219
-source /root/.venv/bin/activate
-ansible --version
+ansible-playbook site.yaml -e java_app_version="2.0"
 ```
 
 </details>
