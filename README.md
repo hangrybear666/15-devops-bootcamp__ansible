@@ -6,7 +6,7 @@ coming up
 2. Provision 1-n Linode/EC2 Instances /w terraform & manually start ansible to install java and deploy nexus artifact repository
 3. Provision 1 Linode/EC2 Instance /w terraform & manually start ansible to run a fullstack docker compose application /w AWS ECR image
 4. Provision 1 EC2 Instance /w terraform & <b>automatically</b> start ansible to run a fullstack docker compose application /w AWS ECR image
-5. Provision 1-n Linode/EC2 Instances /w terraform & manually start ansible with <b>dynamic inventory</b> to run a fullstack docker compose application /w AWS ECR image
+5. Provision 1 EC2 Instance /w terraform & manually start ansible with <b>dynamic inventory</b> to run a fullstack docker compose application /w AWS ECR image
 6. Provision AWS EKS cluster via eksctl & manually start ansible to automatically provide a basic kubernetes deployment
 <!-- <b><u>The exercise projects are:</u></b> -->
 
@@ -229,9 +229,12 @@ https://github.com/hangrybear666/12-devops-bootcamp__terraform
 -----
 
 <details closed>
-<summary><b>5. Provision 1-n Linode/EC2 Instances /w terraform & manually start ansible with <b>dynamic inventory</b> to run a fullstack docker compose application /w AWS ECR image</b></summary>
+<summary><b>5. Provision 1 EC2 Instance /w terraform & manually start ansible with <b>dynamic inventory</b> to run a fullstack docker compose application /w AWS ECR image</b></summary>
 
-#### a. Create 1-n EC2 Instances by following the demo project 2) in the terraform repo
+#### a. Create 1 EC2 Instance by following the demo project 2) in the terraform repo
+
+*Limitation:* Since only one image with one remote address is created in the build step, this playbook currently only supports one instance.
+We would have to build a separate Image for each instance and change the role in `15-devops-bootcamp__ansible/03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/tasks/main.yaml`
 
 https://github.com/hangrybear666/12-devops-bootcamp__terraform
 
@@ -277,7 +280,6 @@ ansible-playbook site.yaml -e java_app_version="1.9"
 
 -----
 
-
 <details closed>
 <summary><b>6. Provision AWS EKS cluster via eksctl & manually start ansible to automatically provide a basic kubernetes deployment</b></summary>
 
@@ -317,6 +319,27 @@ cd 06-aws-eks-deploy-to-kubernetes/
 export K8S_AUTH_KUBECONFIG="/home/admin/git/15-devops-bootcamp__ansible/06-aws-eks-deploy-to-kubernetes/kube.config"
 ansible-playbook site.yaml
 ```
+
+</details>
+
+-----
+
+
+<details closed>
+<summary><b>7. </b></summary>
+
+#### a. Create Jenkins Server by following bonus project 1 in terraform repo
+
+https://github.com/hangrybear666/12-devops-bootcamp__terraform
+
+#### b. Change specific configuration values for your workspace
+
+- Change private key path `ansible_ssh_private_key_file` in `group_vars/all.yaml`
+
+#### c.
+<u>The following roles are included:</u>
+
+- asd
 
 </details>
 
