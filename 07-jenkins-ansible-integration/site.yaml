@@ -1,0 +1,7 @@
+---
+- name: Install Pip & Boto 3 for AWS CLI dependencies
+  become: true
+  hosts: localhost
+  roles:
+    - install-aws-plugin-dependencies
+
