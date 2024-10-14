@@ -281,22 +281,40 @@ ansible-playbook site.yaml -e java_app_version="1.9"
 <details closed>
 <summary><b>6. Provision AWS EKS cluster via eksctl & manually start ansible to automatically provide a basic kubernetes deployment</b></summary>
 
-#### a. Create AWS EKS cluster by following project 4 in aws k8s repo
+#### a. Create AWS EKS cluster by following project 4 in aws k8s repo and install required dependencies locally
 
 https://github.com/hangrybear666/11-devops-bootcamp__kubernetes_aws_eks
 
 #### b. Change specific configuration values for your workspace
 
+- *Note:* Change kubeconfig filepath in aws eks command to your own.
+```bash
+aws eks update-kubeconfig --name aws-eksctl-cluster --region eu-central-1 --kubeconfig /home/admin/git/15-devops-bootcamp__ansible/06-aws-eks-deploy-to-kubernetes/kube.config
+```
 - Change private key path `ansible_ssh_private_key_file` in `group_vars/all.yaml`
-- Add `region: YOUR_REGION` and `ecr_repo_name: YOUR_REPO_NAME` (just name without URL) to `group_vars/all.yaml` to overwrite the build-and-push-to-ecr role's vars.
+- Replace `manifest_file_path` in `host_vars/localhost.yaml` to the absolute path where the `nginx-deployment.yaml` file is situated in your workspace
 
+#### c. Run kubectl commands to ensure cluster & kube.config file has been setup correctly
+
+```bash
+cd 06-aws-eks-deploy-to-kubernetes/
+export KUBECONFIG=kube.config
+kubectl get nodes
+kubectl get all -n kube-system
+```
 
 #### d. Run ansible playbook dynamically querying aws for ec2 instance connection details
 
 <u>The following roles are included:</u>
-- 
 
+- install-k8s-python-dependencies
+- create-namespace
+- deploy-single-k8s-manifest
+
+- *Note:* Change kubeconfig filepath in aws eks command to your own.
 ```bash
+cd 06-aws-eks-deploy-to-kubernetes/
+export K8S_AUTH_KUBECONFIG="/home/admin/git/15-devops-bootcamp__ansible/06-aws-eks-deploy-to-kubernetes/kube.config"
 ansible-playbook site.yaml
 ```
 

@@ -1,1 +1,2 @@
-03-ec2-deploy-docker-compose/roles/build-and-push-to-ecr/files/java-app/.env2
+kube.config
+.env

@@ -1,0 +1,9 @@
+- name: Install python dependencies for ansible kubernetes
+  ansible.builtin.apt:
+    name:
+      - python3-kubernetes
+    state: latest
+    update_cache: true
+    force_apt_get: yes
+    cache_valid_time: "{{ apt_cache_valid_seconds }}"
+

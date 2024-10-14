@@ -1,0 +1,2 @@
+manifest_file_path: /home/admin/git/15-devops-bootcamp__ansible/06-aws-eks-deploy-to-kubernetes/roles/deploy-single-k8s-manifest/files
+ansible_python_interpreter: /usr/bin/python3

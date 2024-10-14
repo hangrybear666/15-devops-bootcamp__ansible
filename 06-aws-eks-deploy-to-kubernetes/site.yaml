@@ -1,0 +1,12 @@
+- name: Install Pip & Boto 3 for AWS CLI dependencies
+  become: true
+  hosts: localhost
+  roles:
+    - install-k8s-python-dependencies
+
+- name: Deploy app in new namespace
+  hosts: localhost
+  roles:
+    - create-namespace
+    - deploy-single-k8s-manifest
+

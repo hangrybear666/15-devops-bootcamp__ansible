@@ -1,0 +1,5 @@
+- name: Deploy nginx app
+  kubernetes.core.k8s:
+    src: "{{ manifest_file_path }}/nginx-deployment.yaml"
+    state: present
+    namespace: testing
