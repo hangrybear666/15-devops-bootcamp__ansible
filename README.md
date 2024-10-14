@@ -341,15 +341,17 @@ https://github.com/hangrybear666/12-devops-bootcamp__terraform
 https://github.com/hangrybear666/12-devops-bootcamp__terraform
 
 
-#### c. Create 1 EC2 Instance for java app deployment via ansible playbook by following demo project 2 in terraform repo
+#### c. Create 1 EC2 Instance and whitelist your control node IP for java app deployment via ansible playbook by following demo project 2 in terraform repo
 
-*Limitation:* Since only one image with one remote address is created in the build step, this playbook currently only supports one instance.
-We would have to build a separate Image for each instance and change the role in `15-devops-bootcamp__ansible/07-jenkins-ansible-integration/roles/build-and-push-to-ecr/tasks/main.yaml`
+<b><u>IMPORTANT:</u></b> Whitelist your control node ip by adding it to `my_ips` in `terraform-02-ec2-modularized/terraform.tfvars`
 
 *Note:* Save the ssh private key for creating jenkins credentials later.
 
 <u>Demo Project 2:</u>
 https://github.com/hangrybear666/12-devops-bootcamp__terraform
+
+*Limitation:* Since only one image with one remote address is created in the build step, this playbook currently only supports one instance.
+We would have to build a separate Image for each instance and change the role in `15-devops-bootcamp__ansible/07-jenkins-ansible-integration/roles/build-and-push-to-ecr/tasks/main.yaml`
 
 
 #### d. Install required ansible dependencies on Linode ansible control node via ssh and configure via scp
@@ -369,14 +371,11 @@ scp -r ~/.aws/. root@172.104.237.64:/root/.aws/
 #### e. Change specific configuration values for your workspace
 
 - Change environment variable `ANSIBLE_CONTROL_NODE_IP` in `Jenkinsfile` to contain your control node IP address.
-- Change private key path `ansible_ssh_private_key_file` in `group_vars/all.yaml`
 
 #### f. Configure Jenkins Pipeline & Server
 
 **Create Secrets**
 - Create Username:Password with the id `git-creds` with either your username or jenkins and an API Token as password
-<!-- - Create Secret Text with the id `aws_access_key_id` with your AWS IAM Account's Access Key ID (or better a dedicated Jenkins IAM Account) -->
-<!-- - Create Secret Text with the id `aws_secret_access_key` with your AWS IAM Account's Secret Access Key (or better a dedicated Jenkins IAM Account) -->
 - Create SSH Username:Private Key with the id `control-node-pk` and provide the private key used for Linode Server Setup. User is `root`
 - Create SSH Username:Private Key with the id `ec2-targets-pk` and provide the private key used for EC2 Instances Setup. User is `ec2-user`
 
@@ -385,10 +384,9 @@ scp -r ~/.aws/. root@172.104.237.64:/root/.aws/
 - Jenkinsfile in pipeline is located under `07-jenkins-ansible-integration/Jenkinsfile`
 
 **Configure Jenkins Plugins**
-- Add Maven Plugin under Manage Jenkins -> Tools -> Maven and name it Maven.
 - Install SSH Agent Plugin under Manage Jenkins -> Plugins -> Available Plugins
 
-#### g.
+#### g. Ansible Playbook being executed by control node
 
 <u>The following roles are included:</u>
 - install-aws-plugin-dependencies
@@ -399,10 +397,6 @@ scp -r ~/.aws/. root@172.104.237.64:/root/.aws/
 - install-pip-boto3
 - install-acl-for-non-root-users
 - copy-and-start-docker-compose
-
-```bash
-ansible-playbook site.yaml -e java_app_version="2.0"
-```
 
 </details>
 
