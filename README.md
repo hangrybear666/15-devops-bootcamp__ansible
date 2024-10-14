@@ -363,7 +363,7 @@ https://github.com/hangrybear666/12-devops-bootcamp__terraform
 ```bash
 cd scripts/
 ssh -i ~/.ssh/id_ed25519 root@172.104.237.64 'bash -s' < setup-ansible-control-node.sh
-scp ~/.aws/ root@172.104.237.64:/root/.aws/
+scp -r ~/.aws/. root@172.104.237.64:/root/.aws/
 ```
 
 #### e. Change specific configuration values for your workspace
