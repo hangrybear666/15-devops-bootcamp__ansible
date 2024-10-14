@@ -33,11 +33,15 @@ pipeline {
           script {
             echo "executing ansible playbook on control node"
             def controlNode = "root@${ANSIBLE_SERVER}"
-            def shellCmd = """
-            ansible-playbook site.yaml -e java_app_version="${JAVA_VERSION}"
-            """
             sshagent(['control-node-pk']) {
-              sh "ssh -o StrictHostKeyChecking=no ${controlNode} ${shellCmd}"
+              sh """
+              ssh -o StrictHostKeyChecking=no ${controlNode} "
+                source /root/.venv/bin/activate
+                cd /root/07-jenkins-ansible-integration
+                ansible-playbook site.yaml -e java_app_version=${JAVA_VERSION}
+                deactivate
+                "
+              """
             }
           }
         }

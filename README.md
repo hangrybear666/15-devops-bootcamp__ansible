@@ -8,7 +8,7 @@ coming up
 4. Provision 1 EC2 Instance /w terraform & <b>automatically</b> start ansible to run a fullstack docker compose application /w AWS ECR image
 5. Provision 1 EC2 Instance /w terraform & manually start ansible with <b>dynamic inventory</b> to run a fullstack docker compose application /w AWS ECR image
 6. Provision AWS EKS cluster via eksctl & manually start ansible to automatically provide a basic kubernetes deployment
-7. Jenkins CI/CD integration to setup an EC2 ansible control node & then run ansible playbook deploying a java-maven app on 1 EC2 instance from pipeline
+7. Jenkins CI/CD integration to setup an EC2 ansible control node & then run ansible playbook to run a fullstack docker compose application /w AWS ECR image
 <!-- <b><u>The exercise projects are:</u></b> -->
 
 ## Setup
@@ -326,7 +326,7 @@ ansible-playbook site.yaml
 -----
 
 <details closed>
-<summary><b>7. Jenkins CI/CD integration to setup an EC2 ansible control node & then run ansible playbook deploying a java-maven app on 1-n EC2 instances from pipeline</b></summary>
+<summary><b>7. Jenkins CI/CD integration to setup an EC2 ansible control node & then run ansible playbook to run a fullstack docker compose application /w AWS ECR image</b></summary>
 
 #### a. Create Jenkins Server by following bonus project 1 in terraform repo
 
@@ -357,18 +357,12 @@ https://github.com/hangrybear666/12-devops-bootcamp__terraform
 *NOTE:* Replace ssh target ip with your own.
 
 - Install Ansible and python dependencies via script
-- Install AWS CLI via explicit commands
+- Install AWS CLI and dependencies via same script
 - Copy AWS Config and Credentials via scp
 
 ```bash
 cd scripts/
 ssh -i ~/.ssh/id_ed25519 root@172.104.139.219 'bash -s' < install-ansible-control-node.sh
-
-ssh -i ~/.ssh/id_ed25519 root@172.104.139.219
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-sudo apt-get update && sudo apt-get install -y unzip && unzip awscliv2.zip
-sudo ./aws/install
-mkdir /root/.aws
 
 scp ~/.aws/config root@172.104.139.219:/root/.aws/config
 scp ~/.aws/credentials root@172.104.139.219:/root/.aws/credentials

@@ -24,8 +24,20 @@ sudo apt-get install -y python3-boto3
 sudo python3 -m venv .venv
 source /root/.venv/bin/activate
 pip install ansible
+# dependencies for aws cli integration
+pip install boto3
+pip install packaging
+pip install requests
+pip install botocore
+
+# Install AWS CLI
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+sudo apt-get update && sudo apt-get install -y unzip && unzip awscliv2.zip
+sudo ./aws/install
+mkdir /root/.aws
 
 echo "" && echo "##################################"
 echo "Ansible installed under $(which ansible)"
 echo "Ansible version:"
 ansible --version
+
